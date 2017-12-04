@@ -1,0 +1,34 @@
+package bgu.spl.a2;
+
+import static org.junit.Assert.*;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+public class VersionMonitorTest {
+
+	@Before
+	public void setUp() throws Exception {
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
+
+	@Test
+	public void testGetVersion() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testInc() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testAwait() {
+		fail("Not yet implemented");
+	}
+
+}
