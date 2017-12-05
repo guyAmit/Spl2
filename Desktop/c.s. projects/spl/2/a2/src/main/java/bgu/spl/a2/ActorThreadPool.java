@@ -1,4 +1,7 @@
 package bgu.spl.a2;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * represents an actor thread pool - to understand what this class does please
@@ -10,8 +13,15 @@ package bgu.spl.a2;
  * private, protected or package protected - in other words, no new public
  * methods
  */
-public class ActorThreadPool {
 
+public class ActorThreadPool {
+	
+	private ArrayList<Thread> Threads;
+	private Map<String,PrivateState> privateStates; //<actorID,private state>
+	private ArrayList<OneAccessQueue<Action>> actionsQueue; //action Queues for each actor
+	private Map<String,OneAccessQueue<Action>> actors; // <actorID,actionQueue>
+	
+	
 	/**
 	 * creates a {@link ActorThreadPool} which has nthreads. Note, threads
 	 * should not get started until calling to the {@link #start()} method.
@@ -26,8 +36,18 @@ public class ActorThreadPool {
 	 */
 	public ActorThreadPool(int nthreads) {
 		// TODO: replace method body with real implementation
-		throw new UnsupportedOperationException("Not Implemented Yet.");
-	}
+		  this.privateStates= new ConcurrentHashMap<String,PrivateState>();
+		  this.actors = new ConcurrentHashMap<String,OneAccessQueue<Action>>();
+		  this.actionsQueue = new ArrayList<>();
+		  this.Threads = new ArrayList<>();
+		  for (int i = 0; i < nthreads; i++) {
+			this.Threads.add(new Thread(()->
+			{
+				//ToDo:: implement runnable
+				
+			}));
+		  }
+		}
 
 	/**
 	 * submits an action into an actor to be executed by a thread belongs to
@@ -41,9 +61,22 @@ public class ActorThreadPool {
 	 *            actor's private state (actor's information)
 	 */
 	public void submit(Action<?> action, String actorId, PrivateState actorState) {
-		// TODO: replace method body with real implementation
-		throw new UnsupportedOperationException("Not Implemented Yet.");
-	}
+		//check if actor already exists
+		if(this.privateStates.containsKey(actorId)) {
+			while(!this.actors.get(actorId).tryToLock().get())
+				this.actors.get(actorId).enqueue(action);
+		}
+		else {//actor does not exits
+			this.privateStates.put(actorId, actorState);
+			OneAccessQueue<Action> newQueue = new OneAccessQueue<>();
+			while(!newQueue.tryToLock().get()) {
+				newQueue.enqueue(action);
+				this.actors.put(actorId, newQueue);
+				this.actionsQueue.add(newQueue);
+			}
+		}
+		}
+		
 
 	/**
 	 * closes the thread pool - this method interrupts all the threads and waits
@@ -65,7 +98,9 @@ public class ActorThreadPool {
 	 */
 	public void start() {
 		// TODO: replace method body with real implementation
-		throw new UnsupportedOperationException("Not Implemented Yet.");
+		for (Thread thread : Threads) {
+			thread.start();
+		}
 	}
 
 }
