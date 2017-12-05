@@ -18,10 +18,13 @@ public class StudentPrivateState extends PrivateState{
 	 * this may cause automatic tests to fail..
 	 */
 	public StudentPrivateState() {
-		//TODO: replace method body with real implementation
-		throw new UnsupportedOperationException("Not Implemented Yet.");
+		grades = new HashMap<>();
+		signature = 0;
 	}
-
+	public StudentPrivateState(HashMap<String,Integer> grades,long signature) {
+		this.grades = grades;
+		this.signature = signature;
+	}
 	public HashMap<String, Integer> getGrades() {
 		return grades;
 	}

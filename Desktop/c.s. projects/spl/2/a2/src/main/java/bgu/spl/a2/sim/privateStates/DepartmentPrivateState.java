@@ -1,5 +1,6 @@
 package bgu.spl.a2.sim.privateStates;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import bgu.spl.a2.PrivateState;
@@ -17,10 +18,13 @@ public class DepartmentPrivateState extends PrivateState{
 	 * this may cause automatic tests to fail..
 	 */
 	public DepartmentPrivateState() {
-		//TODO: replace method body with real implementation
-		throw new UnsupportedOperationException("Not Implemented Yet.");
+		courseList = new ArrayList<>();
+		studentList = new ArrayList<>();
 	}
-
+	public DepartmentPrivateState (List<String>courseList, List<String>studentList) {
+		this.courseList = courseList;
+		this.studentList = studentList;
+	}
 	public List<String> getCourseList() {
 		return courseList;
 	}
