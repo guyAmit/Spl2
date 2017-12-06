@@ -18,30 +18,32 @@ public class OneAccessQueue<E> extends LinkedList<E>{
 		super();
 		isFree.set(true);
 	}
+	
 	/**
 	 * <h1>isFree</h1>
 	 * <p>{@link #isFree} will return True if no other thread is working on the Queue</p>
 	 * @return if the queue is free to work
 	 */
-	public AtomicBoolean isFree(){
-		return this.isFree;
+	public Boolean isFree(){
+		return this.isFree.get();
 	}
+	
 	/**
 	 * <h1>enqueue</h1>
 	 * <p> the method tries to insert a new value into the Queue, <br>
 	 * 	if no one is working on the queue, the addition will go as <br>
 	 * 	planned, otherwise the method will return False </p>
-	 * @Pre the Queue should be free, i.e. the user locked it using the {@link #tryToLock()} method
+	 * @Pre the Queue should be locked on the using thread, i.e. the user locked it by using the {@link #tryToLock()} method
 	 * @param e-will be used to hold actions
 	 * @return True if the addition was successful, False otherwise
 	 */
-	public  AtomicBoolean enqueue(E e) {
-		if(this.isFree().get()) {
+	public  Boolean enqueue(E e) {
+		if(!this.isFree()) {
 			super.addLast(e);
-			return this.isFree();
+			return this.isFree.compareAndSet(false, true);
 		}
 		else{
-			return this.isFree();
+			return false;
 		}
 	}
 	
@@ -50,12 +52,14 @@ public class OneAccessQueue<E> extends LinkedList<E>{
 	 * <p>the method tries to remove the first item in the Queue,<br>
 	 * 	if no one is working on the queue, the removal will go as <br>
 	 * 	planned, otherwise the method will return <b>Null</b> </p></p>
-	 * @Pre the Queue should be free, i.e. the user locked it using the {@link #tryToLock()} method
+	 * @Pre the Queue should be locked on the using thread, i.e. the user locked it by using the {@link #tryToLock()} method
 	 * @return the first item in the Queue
 	 */
 	public E dequeue() {
-		if(this.isFree().get()) {
-			return super.removeFirst();
+		if(!this.isFree()) {
+			E returnVal = super.removeFirst();
+			this.isFree.compareAndSet(false, true);
+			return returnVal;
 		}
 		else {
 			return null;
@@ -66,22 +70,30 @@ public class OneAccessQueue<E> extends LinkedList<E>{
 	 * <h1>enqueue</h1>
 	 * <p>the method will try to get accesses to the queue<br>
 	 * if it succeeds it will lock the Queue,and return True<br>
-	 * synchronized explanation: the if the Queue is free, we need to lock it without getting interrupted</p>
-	 * @return True is lock was a success
+	 * we will achieve that using the <b>compareAndSet</b> method<br>
+	 * <b>use this method first, do not do any operations without using this method!!</b></p>
+	 * @return True if lock was a success
 	 */
-	 public AtomicBoolean tryToLock() {
+	 public Boolean tryToLock() {
 		try {
-			synchronized (isFree) {
-			if(this.isFree().get()) {
-					this.isFree.set(false);
-					return new AtomicBoolean(true);
+			if(this.isFree.compareAndSet(true, false)) {
+				return true;
 			}
-			else
-				return this.isFree();
+			else {
+				return false;
 			}
 		}catch (Exception e) {
-			return this.isFree();
+			return false;
 		}
 	}
+	 
+	 
+	 /**
+	  * <h1>length</h1>
+	  * @return the length of the queue
+	  */
+	 public int length() {
+		 return super.size();
+	 }
 
 }

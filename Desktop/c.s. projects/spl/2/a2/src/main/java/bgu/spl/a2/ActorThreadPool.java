@@ -63,17 +63,11 @@ public class ActorThreadPool {
 	public void submit(Action<?> action, String actorId, PrivateState actorState) {
 		//check if actor already exists
 		if(this.privateStates.containsKey(actorId)) {
-			while(!this.actors.get(actorId).tryToLock().get())
-				this.actors.get(actorId).enqueue(action);
+			while(!this.actors.get(actorId).tryToLock());
 		}
 		else {//actor does not exits
 			this.privateStates.put(actorId, actorState);
 			OneAccessQueue<Action> newQueue = new OneAccessQueue<>();
-			while(!newQueue.tryToLock().get()) {
-				newQueue.enqueue(action);
-				this.actors.put(actorId, newQueue);
-				this.actionsQueue.add(newQueue);
-			}
 		}
 		}
 		
