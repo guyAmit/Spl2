@@ -1,7 +1,11 @@
 package bgu.spl.a2;
+import static org.junit.Assume.assumeFalse;
+
+import java.security.KeyStore.Entry;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * represents an actor thread pool - to understand what this class does please
@@ -16,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ActorThreadPool {
 	
-	private ArrayList<Thread> Threads;
+	private Map<Thread,AtomicBoolean> Threads; // hold all the threads, and a boolean representing whether they should stop working
 	private Map<String,PrivateState> privateStates; //<actorID,private state>
 	private ArrayList<OneAccessQueue<Action>> actionsQueue; //action Queues for each actor
 	private Map<String,OneAccessQueue<Action>> actors; // <actorID,actionQueue>
@@ -39,15 +43,23 @@ public class ActorThreadPool {
 		  this.privateStates= new ConcurrentHashMap<String,PrivateState>();
 		  this.actors = new ConcurrentHashMap<String,OneAccessQueue<Action>>();
 		  this.actionsQueue = new ArrayList<>();
-		  this.Threads = new ArrayList<>();
-		  for (int i = 0; i < nthreads; i++) {
-			this.Threads.add(new Thread(()->
-			{
-				//ToDo:: implement runnable
-				
-			}));
-		  }
-		}
+		  this.Threads = new ConcurrentHashMap<Thread,AtomicBoolean>();
+		  this.Threads.put(new Thread(()->{
+			  while(this.Threads.get(this).get()) { //should be true until changed be true shutdown method
+				  for (OneAccessQueue<Action> oneAccessQueue : actionsQueue) {
+					if(oneAccessQueue.tryToLock()) {
+						Action act = oneAccessQueue.dequeue();
+						act.start();
+					}
+					else continue;
+				}
+			  }
+			  
+		  }),new AtomicBoolean(true));
+	}
+		  
+		  
+		
 
 	/**
 	 * submits an action into an actor to be executed by a thread belongs to
@@ -61,15 +73,16 @@ public class ActorThreadPool {
 	 *            actor's private state (actor's information)
 	 */
 	public void submit(Action<?> action, String actorId, PrivateState actorState) {
-		//check if actor already exists
-		if(this.privateStates.containsKey(actorId)) {
-			while(!this.actors.get(actorId).tryToLock());
+		if(this.actors.containsKey(actorId)) {
+			this.actors.get(actorId).add(action);
 		}
-		else {//actor does not exits
+		else {
+			OneAccessQueue<Action> newQueue = new OneAccessQueue<Action>();
+			newQueue.enqueue(action);
+			this.actors.put(actorId, newQueue);
 			this.privateStates.put(actorId, actorState);
-			OneAccessQueue<Action> newQueue = new OneAccessQueue<>();
 		}
-		}
+	}
 		
 
 	/**
@@ -83,8 +96,9 @@ public class ActorThreadPool {
 	 *             if the thread that shut down the threads is interrupted
 	 */
 	public void shutdown() throws InterruptedException {
-		// TODO: replace method body with real implementation
-		throw new UnsupportedOperationException("Not Implemented Yet.");
+		for (java.util.Map.Entry<Thread, AtomicBoolean> entry : this.Threads.entrySet()) {
+			entry.getValue().compareAndSet(true, false);
+		}
 	}
 
 	/**
@@ -92,8 +106,8 @@ public class ActorThreadPool {
 	 */
 	public void start() {
 		// TODO: replace method body with real implementation
-		for (Thread thread : Threads) {
-			thread.start();
+		for (java.util.Map.Entry<Thread, AtomicBoolean> entry : this.Threads.entrySet()) {
+			entry.getKey().start();
 		}
 	}
 

@@ -34,7 +34,7 @@ public abstract class Action<R> {
     *
     */
    /*package*/ final void handle(ActorThreadPool pool, String actorId, PrivateState actorState) {
-	   pool.submit(this, actorId, actorState);   
+	     
    }
     
     

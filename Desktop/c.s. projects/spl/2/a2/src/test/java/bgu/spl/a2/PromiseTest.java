@@ -31,7 +31,11 @@ public class PromiseTest {
 			try {
 				x.get();
 				fail();
-			}catch(Exception e) {}
+			}catch(IllegalStateException e) {
+				assertFalse(x.isResolved());
+			}catch(Exception e) {
+				fail();
+			}
 			x.resolve(5);
 			Integer value =new Integer( x.get());
 			assertTrue(value != null && value==5);

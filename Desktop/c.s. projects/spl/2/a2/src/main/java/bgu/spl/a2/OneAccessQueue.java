@@ -33,16 +33,14 @@ public class OneAccessQueue<E> extends LinkedList<E>{
 	 * <p> the method tries to insert a new value into the Queue, <br>
 	 * 	if no one is working on the queue, the addition will go as <br>
 	 * 	planned, otherwise the method will return False </p>
-	 * @Pre the Queue should be locked on the using thread, i.e. the user locked it by using the {@link #tryToLock()} method
 	 * @param e-will be used to hold actions
 	 * @return True if the addition was successful, False otherwise
 	 */
 	public  Boolean enqueue(E e) {
-		if(!this.isFree()) {
+		try {
 			super.addLast(e);
-			return this.isFree.compareAndSet(false, true);
-		}
-		else{
+			return true;
+		}catch (Exception t) {
 			return false;
 		}
 	}
@@ -67,11 +65,11 @@ public class OneAccessQueue<E> extends LinkedList<E>{
 	}
 	
 	/**
-	 * <h1>enqueue</h1>
+	 * <h1>tryToLock</h1>
 	 * <p>the method will try to get accesses to the queue<br>
 	 * if it succeeds it will lock the Queue,and return True<br>
 	 * we will achieve that using the <b>compareAndSet</b> method<br>
-	 * <b>use this method first, do not do any operations without using this method!!</b></p>
+	 * <b>use this method first, do not deqeueu without using this method!!</b></p>
 	 * @return True if lock was a success
 	 */
 	 public Boolean tryToLock() {

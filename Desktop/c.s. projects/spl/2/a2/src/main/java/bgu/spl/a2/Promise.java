@@ -20,7 +20,7 @@ public class Promise<T>{
 	/**
 	 *
 	 * @return the resolved value if such exists (i.e., if this object has been
-	 *         {@link #resolve(java.lang.Object)}ed 
+	 *         {@link #resolve(java.lang.Object)} 
 	 * @throws IllegalStateException
 	 *             in the case where this method is called and this object is
 	 *             not yet resolved
