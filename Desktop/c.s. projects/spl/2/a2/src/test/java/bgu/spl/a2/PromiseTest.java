@@ -98,7 +98,7 @@ public class PromiseTest {
 				
 				@Override
 				public void call() {
-					passed[0] = true;					
+					passed[0] = true;			
 				}
 			};
 			x.subscribe(c);

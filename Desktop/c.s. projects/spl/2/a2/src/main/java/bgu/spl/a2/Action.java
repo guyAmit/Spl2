@@ -14,7 +14,6 @@ import java.util.Collection;
  * @param <R> the action result type
  */
 public abstract class Action<R> {
-
 	/**
      * start handling the action - note that this method is protected, a thread
      * cannot call it directly.
@@ -35,6 +34,7 @@ public abstract class Action<R> {
     *
     */
    /*package*/ final void handle(ActorThreadPool pool, String actorId, PrivateState actorState) {
+	   pool.submit(this, actorId, actorState);   
    }
     
     
