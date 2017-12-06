@@ -1,6 +1,9 @@
 package bgu.spl.a2;
 
 import static org.junit.Assert.*;
+
+import javax.security.auth.callback.Callback;
+
 //import java.util.concurrent.CountDownLatch;
 import org.junit.After;
 import org.junit.Before;
@@ -91,9 +94,21 @@ public class PromiseTest {
 		Promise<Integer> x = new Promise<>();
 		final boolean[] passed = {false};
 		try {
-			x.subscribe(()->passed[0] = true);
-			x.resolve(5);
-			assertTrue(passed[0]);
+			callback c= new callback() {
+				
+				@Override
+				public void call() {
+					passed[0] = true;					
+				}
+			};
+			x.subscribe(c);
+			try {
+				x.subscribe(c);
+				fail();
+			}catch(Exception e) {
+				x.resolve(5);
+				assertTrue(passed[0]);
+			}
 		}
 		catch(Exception e){
 			fail();
