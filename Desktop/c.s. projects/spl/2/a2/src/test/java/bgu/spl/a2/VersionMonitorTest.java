@@ -92,8 +92,8 @@ public class VersionMonitorTest {
 	 * the thread to get into waiting state-we will check that. after words we <br>
 	 * will use {@link Inc()}, we expect that the thread will get out of waiting mode<br>
 	 * -and we will check that too </p>
-	 * @Pre t1 should be at running state
-	 * @Inv t1 should get out of running state <=> {@link Await()} is called
+	 * @Pre t should be at running state
+	 * @Inv t should get out of running state <=> {@link Await()} is called
 	 * @throws InterruptedException
 	 */
 	@Test
