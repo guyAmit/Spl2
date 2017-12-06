@@ -13,10 +13,22 @@ import java.util.concurrent.atomic.*;
 public class OneAccessQueue<E> extends LinkedList<E>{
 	
 	private AtomicBoolean isFree;
+	private String name;
+
 	
-	public OneAccessQueue(){
+	public OneAccessQueue(String name){
 		super();
 		isFree.set(true);
+		this.name=name;
+	}
+	
+	
+	/**
+	 * <h1>getName</h1>
+	 * @return the {@link #name} of the queue
+	 */
+	public String getName() {
+		return name;
 	}
 	
 	/**
@@ -93,5 +105,6 @@ public class OneAccessQueue<E> extends LinkedList<E>{
 	 public int length() {
 		 return super.size();
 	 }
+
 
 }

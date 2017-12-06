@@ -45,11 +45,14 @@ public class ActorThreadPool {
 		  this.actionsQueue = new ArrayList<>();
 		  this.Threads = new ConcurrentHashMap<Thread,AtomicBoolean>();
 		  this.Threads.put(new Thread(()->{
-			  while(this.Threads.get(this).get()) { //should be true until changed be true shutdown method
+			  
+			  while(this.Threads.get(this).get()) { //should be true until changed by the shutdown method
 				  for (OneAccessQueue<Action> oneAccessQueue : actionsQueue) {
 					if(oneAccessQueue.tryToLock()) {
 						Action act = oneAccessQueue.dequeue();
-						act.start();
+						String actorId = oneAccessQueue.getName();
+						PrivateState state = this.privateStates.get(actorId);
+						act.handle(this,actorId, state);
 					}
 					else continue;
 				}
@@ -77,7 +80,7 @@ public class ActorThreadPool {
 			this.actors.get(actorId).add(action);
 		}
 		else {
-			OneAccessQueue<Action> newQueue = new OneAccessQueue<Action>();
+			OneAccessQueue<Action> newQueue = new OneAccessQueue<Action>(actorId);
 			newQueue.enqueue(action);
 			this.actors.put(actorId, newQueue);
 			this.privateStates.put(actorId, actorState);
