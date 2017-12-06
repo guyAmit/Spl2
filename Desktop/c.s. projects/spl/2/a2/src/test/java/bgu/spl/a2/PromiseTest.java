@@ -64,12 +64,7 @@ public class PromiseTest {
 		Promise<Integer> x = new Promise<>();
 		final boolean[] passed = {false};
 		try {
-			x.subscribe(new callback() {
-		        @Override
-				public void call() {
-					passed[0]=true;
-				}
-		    });
+			x.subscribe(()->passed[0] = true);
 			x.resolve(5);
 			try{
 				x.resolve(6);
@@ -96,13 +91,7 @@ public class PromiseTest {
 		Promise<Integer> x = new Promise<>();
 		final boolean[] passed = {false};
 		try {
-			x.subscribe(new callback() {
-				@Override
-				public void call() {
-					// TODO Auto-generated method stub
-					passed[0] = true;
-				}
-			});
+			x.subscribe(()->passed[0] = true);
 			x.resolve(5);
 			assertTrue(passed[0]);
 		}

@@ -1,6 +1,9 @@
 package bgu.spl.a2;
 
 import static org.junit.Assert.*;
+
+import java.lang.Thread.State;
+
 //import java.time.chrono.ThaiBuddhistEra;
 import org.junit.After;
 import org.junit.Before;
@@ -96,19 +99,20 @@ public class VersionMonitorTest {
 	@Test
 	public void testAwait() throws InterruptedException {
 		int version = out.getVersion();
+		final boolean[] passed = {false,false};
 		Thread t= new Thread(()->{
 			try {
+				passed[0]=true;
 				out.await(version);
+				passed[1]=true;
 			} catch (InterruptedException e) {
 				fail();
 			}
 		});
 		t.start();
-		t.join();
-		if(t.getState()!=Thread.State.WAITING)
-			fail();
+		boolean sleeping = t.getState() == State.WAITING;
 		out.inc(); //should bring t out of waiting state
-		Thread.sleep(2000);//giving time to t to go out of waiting state
-		assertNotEquals(t.getState(), Thread.State.WAITING);
+		t.join();
+		assertEquals(passed[0]&passed[1]&sleeping, true);
 	}
 }
