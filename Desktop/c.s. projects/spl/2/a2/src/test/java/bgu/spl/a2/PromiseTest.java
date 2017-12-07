@@ -82,10 +82,11 @@ public class PromiseTest {
 				assertTrue(value != null && value==5 && passed[0]==true);
 			}
 			catch(Exception e){
-				fail();
+				fail(e.getMessage());
 			}
 		}
 		catch(Exception e){
+			System.out.println(e.getMessage());
 			fail();
 		}
 	}

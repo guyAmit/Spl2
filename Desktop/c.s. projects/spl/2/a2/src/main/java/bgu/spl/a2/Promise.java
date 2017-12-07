@@ -1,4 +1,11 @@
 package bgu.spl.a2;
+/**
+ * @author Guy-Amit
+ * @version 1.0.0
+ */
+
+import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * this class represents a deferred result i.e., an object that eventually will
@@ -16,6 +23,15 @@ package bgu.spl.a2;
  *            the result type, <boolean> resolved - initialized ;
  */
 public class Promise<T>{
+	
+	private ArrayList<callback> callbacks;
+	private T resualt;
+	private AtomicBoolean isResolved;
+	
+	public Promise() {
+		this.callbacks=new ArrayList<>();
+		this.isResolved= new AtomicBoolean(false);
+	}
 
 	/**
 	 *
@@ -26,8 +42,12 @@ public class Promise<T>{
 	 *             not yet resolved
 	 */
 	public T get() {
-		//TODO: replace method body with real implementation
-		throw new UnsupportedOperationException("Not Implemented Yet.");
+		if(this.isResolved()) {
+			return this.resualt;
+		}
+		else {
+			throw new IllegalStateException("promise is not resolved yet");
+		}
 	}
 
 	/**
@@ -37,8 +57,7 @@ public class Promise<T>{
 	 *         before.
 	 */
 	public boolean isResolved() {
-		//TODO: replace method body with real implementation
-		throw new UnsupportedOperationException("Not Implemented Yet.");
+		return this.isResolved.get();
 	}
 
 
@@ -56,8 +75,18 @@ public class Promise<T>{
 	 *            - the value to resolve this promise object with
 	 */
 	public void resolve(T value){
-		//TODO: replace method body with real implementation
-		throw new UnsupportedOperationException("Not Implemented Yet.");
+		if(this.isResolved.get()) 
+			throw new IllegalStateException("promise is not resloved yet");
+		else {
+			this.isResolved.compareAndSet(false, true);
+			this.resualt=value;
+			synchronized (callbacks) {
+				for (callback callback : callbacks) {
+					callback.call();
+				}
+				this.callbacks.clear();
+			}
+		}
 	}
 
 	/**
@@ -74,7 +103,15 @@ public class Promise<T>{
 	 *            the callback to be called when the promise object is resolved
 	 */
 	public void subscribe(callback callback) {
-		//TODO: replace method body with real implementation
-		throw new UnsupportedOperationException("Not Implemented Yet.");
+		if(this.isResolved()) {
+			callback.call();
+			callback=null;
+		}
+		else {
+			if(!this.callbacks.contains(callback))
+				this.callbacks.add(callback);
+			else
+				throw new RuntimeException();
+		}
 	}
 }

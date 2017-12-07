@@ -1,7 +1,6 @@
 package bgu.spl.a2;
 
 import static org.junit.Assert.*;
-
 import java.lang.Thread.State;
 
 //import java.time.chrono.ThaiBuddhistEra;
@@ -76,7 +75,6 @@ public class VersionMonitorTest {
 		try {
 			int v = out.getVersion();
 			out.inc();
-			assertNotEquals(v, out.getVersion());
 			assertEquals(v+1, out.getVersion());
 			
 		}catch(IllegalMonitorStateException e) {
