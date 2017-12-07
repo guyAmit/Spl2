@@ -1,7 +1,4 @@
 package bgu.spl.a2;
-import static org.junit.Assume.assumeFalse;
-
-import java.security.KeyStore.Entry;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,7 +21,6 @@ public class ActorThreadPool {
 	private Map<String,PrivateState> privateStates; //<actorID,private state>
 	private ArrayList<OneAccessQueue<Action>> actionsQueue; //action Queues for each actor
 	private Map<String,OneAccessQueue<Action>> actors; // <actorID,actionQueue>
-	
 	
 	/**
 	 * creates a {@link ActorThreadPool} which has nthreads. Note, threads

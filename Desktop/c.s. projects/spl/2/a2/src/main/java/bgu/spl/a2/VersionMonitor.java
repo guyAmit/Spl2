@@ -1,5 +1,7 @@
 package bgu.spl.a2;
-
+/**
+ * @author Guy-Amit
+ */
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -61,7 +63,7 @@ public class VersionMonitor {
 	 * we will sync on this, i.e. the VersionMonitor instance<br>
 	 * in order to block the thread</p>
 	 * @param version
-	 * @Inv some other thread will notify this thread to wake up
+	 * @Inv some other thread will notify this thread to wake up using the {@link #inc()} method
 	 * @throws InterruptedException
 	 */
     synchronized public void await(int version) throws InterruptedException {

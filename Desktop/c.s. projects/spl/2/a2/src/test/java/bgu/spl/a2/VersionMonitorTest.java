@@ -33,7 +33,7 @@ public class VersionMonitorTest {
 	
 
 	/**
-	 * <h1> tearDoen method</h1>
+	 * <h1> tearDown method</h1>
 	 * <p> Destroy the monitor under test-for garbage collection</p> 
 	 * @throws Exception
 	 */
