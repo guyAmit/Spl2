@@ -1,5 +1,7 @@
 package bgu.spl.a2;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * Describes a monitor that supports the concept of versioning - its idea is
  * simple, the monitor has a version number which you can receive via the method
@@ -18,18 +20,57 @@ package bgu.spl.a2;
  */
 public class VersionMonitor {
 
+	private AtomicInteger version;
+	
+	public VersionMonitor() {
+		this.version = new AtomicInteger(0);
+	}
+
+	/**
+	 * <h1>getVersion</h1>
+	 * <p>return the current version of the monitor</p>
+	 * @return {@link #version}
+	 */
     public int getVersion() {
-        //TODO: replace method body with real implementation
-        throw new UnsupportedOperationException("Not Implemented Yet.");
+        return this.version.get();
     }
 
-    public void inc() {
-        //TODO: replace method body with real implementation
-        throw new UnsupportedOperationException("Not Implemented Yet.");
+	/**
+	 *<h1>inc</h1>
+	 *<p>increases the version number by 1, and notify all the blocked threads to wake up<br>
+	 *<h2>sync exp:</h2>
+	 *in order to use {@link #notifyAll()} one must be synchronized on the object</p>
+	 *@throws IllegalMonitorStateException
+	 */
+     public void inc() throws IllegalMonitorStateException {
+    	int v = this.version.get();
+        this.version.compareAndSet(v,v+1);
+        synchronized (this) {
+        	try {
+        		this.notifyAll();
+        	}catch (IllegalMonitorStateException e) {
+				e.printStackTrace();
+			}
+        }
     }
 
-    public void await(int version) throws InterruptedException {
-        //TODO: replace method body with real implementation
-        throw new UnsupportedOperationException("Not Implemented Yet.");
+	/**
+	 *<h1>await</h1>
+	 *<p>blocking the thread that is using to monitor till the version changes<br>
+	 *<h2>sync exp:</h2>
+	 * we will sync on this, i.e. the VersionMonitor instance<br>
+	 * in order to block the thread</p>
+	 * @param version
+	 * @Inv some other thread will notify this thread to wake up
+	 * @throws InterruptedException
+	 */
+    synchronized public void await(int version) throws InterruptedException {
+        while(this.getVersion()==version) {
+        	try {
+        		this.wait();
+        	}catch (InterruptedException e) {
+				// TODO: handle exception
+			}
+        }
     }
 }

@@ -79,8 +79,8 @@ public class VersionMonitorTest {
 			assertNotEquals(v, out.getVersion());
 			assertEquals(v+1, out.getVersion());
 			
-		}catch(Exception e) {
-			fail("inc does not change the vertion number");
+		}catch(IllegalMonitorStateException e) {
+			fail("notify all throws an exeption");
 		}
 	}
 	
@@ -110,6 +110,7 @@ public class VersionMonitorTest {
 			}
 		});
 		t.start();
+		try {Thread.sleep(1000);}catch(InterruptedException e) {};
 		boolean sleeping = t.getState() == State.WAITING;
 		out.inc(); //should bring t out of waiting state
 		t.join();
