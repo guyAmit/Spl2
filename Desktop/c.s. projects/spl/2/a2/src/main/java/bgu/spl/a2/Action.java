@@ -16,11 +16,13 @@ import java.util.List;
  */
 public abstract class Action<R> {
 	
-	protected Promise<R> promise;
-	protected R result;
-	protected List<Action<R>> actions;
-	protected String actionName;
+	protected Promise<R> promise = new Promise<>();
+	protected R result = null;
+	//protected List<Action<R>> actions;
+	protected String actionName = "";
 	protected ActorThreadPool pool = null;
+	protected String actorId = "";
+	protected PrivateState actorState = null;
 	/**
      * start handling the action - note that this method is protected, a thread
      * cannot call it directly.
@@ -41,11 +43,13 @@ public abstract class Action<R> {
     *
     */
    /*package*/ final void handle(ActorThreadPool pool, String actorId, PrivateState actorState) {
-	   if(this.pool == null)this.pool = pool;  
-	   start();
-	     for(Action action: actions){
+	   if(this.pool == null)this.pool = pool;
+	   if(this.actorId.equals(""))this.actorId = actorId;
+	   if(this.actorState == null)this.actorState = actorState;
+	   start();//maby should call then
+	     /*for(Action action: actions){
 	    	 sendMessage(action, actorId, actorState); 
-	     }
+	     }*/
    }
     
     
@@ -60,9 +64,9 @@ public abstract class Action<R> {
      * @param callback the callback to execute once all the results are resolved
      */
     protected final void then(Collection<? extends Action<?>> actions, callback callback) {
-       	//TODO: replace method body with real implementation
-        throw new UnsupportedOperationException("Not Implemented Yet.");
-   
+    	for(Action<?> action: actions){
+    		action.promise.subscribe(callback);
+    	}
     }
 
     /**
@@ -72,7 +76,7 @@ public abstract class Action<R> {
      * @param result - the action calculated result
      */
     protected final void complete(R result) {
-    	result = promise.get();
+    	promise.resolve(result);
     }
     
     /**
@@ -94,11 +98,19 @@ public abstract class Action<R> {
 	 *    
      * @return promise that will hold the result of the sent action
      */
-	public Promise<?> sendMessage(Action<?> action, String actorId, PrivateState actorState){
-		pool.submit(action, actorId, actorState);
-        return promise;
-	}
-	/**
+    public Promise<?> sendMessage(Action<?> action, String actorId, PrivateState actorState){
+    	pool.submit(action, actorId, actorState);
+    	while(!promise.isResolved()) {
+    		try {
+    			Thread.sleep(50);
+    		} catch (InterruptedException e) {
+    			// TODO Auto-generated catch block
+    			//e.printStackTrace();
+    		}
+    	}
+    	return promise;
+    }
+    /**
 	 * set action's name
 	 * @param actionName
 	 */

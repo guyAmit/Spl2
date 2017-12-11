@@ -76,7 +76,7 @@ public class Promise<T>{
 	 */
 	public void resolve(T value){
 		if(this.isResolved.get()) 
-			throw new IllegalStateException("promise is not resloved yet");
+			throw new IllegalStateException("promise is not resloved yet");//already resolved maby mistake?
 		else {
 			this.isResolved.compareAndSet(false, true);
 			this.resualt=value;
