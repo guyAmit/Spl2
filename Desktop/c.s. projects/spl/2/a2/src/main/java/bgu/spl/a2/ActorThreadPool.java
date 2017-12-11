@@ -55,11 +55,27 @@ public class ActorThreadPool {
 			  }
 			  
 		  }),new AtomicBoolean(true));
+	}	  
+		  
+	/**
+	 * getter for actors
+	 * @return actors
+	 */
+	public Map<String, PrivateState> getActors(){
+		// TODO: replace method body with real implementation
+		throw new UnsupportedOperationException("Not Implemented Yet.");
 	}
-		  
-		  
-		
-
+	
+	/**
+	 * getter for actor's private state
+	 * @param actorId actor's id
+	 * @return actor's private state
+	 */
+	public PrivateState getPrivaetState(String actorId){
+		// TODO: replace method body with real implementation
+		throw new UnsupportedOperationException("Not Implemented Yet.");
+	}
+	
 	/**
 	 * submits an action into an actor to be executed by a thread belongs to
 	 * this thread pool
