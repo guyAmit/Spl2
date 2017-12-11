@@ -1,6 +1,7 @@
 package bgu.spl.a2;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * an abstract class that represents an action that may be executed using the
@@ -14,6 +15,12 @@ import java.util.Collection;
  * @param <R> the action result type
  */
 public abstract class Action<R> {
+	
+	protected Promise<R> promise;
+	protected R result;
+	protected List<Action<R>> actions;
+	protected String actionName;
+	protected ActorThreadPool pool = null;
 	/**
      * start handling the action - note that this method is protected, a thread
      * cannot call it directly.
@@ -34,7 +41,11 @@ public abstract class Action<R> {
     *
     */
    /*package*/ final void handle(ActorThreadPool pool, String actorId, PrivateState actorState) {
-	     
+	   if(this.pool == null)this.pool = pool;  
+	   start();
+	     for(Action action: actions){
+	    	 sendMessage(action, actorId, actorState); 
+	     }
    }
     
     
@@ -61,17 +72,14 @@ public abstract class Action<R> {
      * @param result - the action calculated result
      */
     protected final void complete(R result) {
-       	//TODO: replace method body with real implementation
-        throw new UnsupportedOperationException("Not Implemented Yet.");
-   
+    	result = promise.get();
     }
     
     /**
      * @return action's promise (result)
      */
     public final Promise<R> getResult() {
-    	//TODO: replace method body with real implementation
-        throw new UnsupportedOperationException("Not Implemented Yet.");
+    	return promise;
     }
     
     /**
@@ -87,8 +95,21 @@ public abstract class Action<R> {
      * @return promise that will hold the result of the sent action
      */
 	public Promise<?> sendMessage(Action<?> action, String actorId, PrivateState actorState){
-        //TODO: replace method body with real implementation
-        throw new UnsupportedOperationException("Not Implemented Yet.");
+		pool.submit(action, actorId, actorState);
+        return promise;
 	}
-
+	/**
+	 * set action's name
+	 * @param actionName
+	 */
+	public void setActionName(String actionName){
+        this.actionName = actionName;
+	}
+	
+	/**
+	 * @return action's name
+	 */
+	public String getActionName(){
+        return this.actionName;
+	}
 }
