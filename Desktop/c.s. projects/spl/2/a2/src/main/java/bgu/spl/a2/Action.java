@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class Action<R> {
 	
 	protected Promise<R> promise = new Promise<>();
-	//protected R result = null;
+	protected R result = null;
 	//protected List<Action<R>> actions;
 	protected String actionName = "";
 	protected ActorThreadPool pool = null;
@@ -29,7 +29,6 @@ public abstract class Action<R> {
      * cannot call it directly.
      */
     protected abstract void start();
-    
 
     /**
     *
@@ -47,9 +46,11 @@ public abstract class Action<R> {
     	if(this.pool == null)this.pool = pool;
     	if(this.actorId.equals(""))this.actorId = actorId;
     	if(this.actorState == null)this.actorState = actorState;
-    	if(call != null)call.call();
+    	if(call != null) {
+    		call.call();
+    	}
     	else {
-    		start();//should call then
+    		start();//should call then and complete
     	}
     }
     
@@ -66,13 +67,12 @@ public abstract class Action<R> {
      */
     protected final void then(Collection<? extends Action<?>> actions, callback callback) {
     	this.call = callback;
-    	Action a=this;
     	AtomicInteger i = new AtomicInteger(actions.size());
     	for(Action<?> action: actions){
     		action.promise.subscribe(()->{
     			i.decrementAndGet();
     			if(i.get()==0)
-    			{pool.submit(a, actorId, actorState);}
+    			{sendMessage(this, actorId, actorState);}
     		});
     	}
     }
@@ -109,13 +109,9 @@ public abstract class Action<R> {
     public Promise<?> sendMessage(Action<?> action, String actorId, PrivateState actorState){
     	pool.submit(action, actorId, actorState);
     	while(!promise.isResolved()) {
-    		try {
-    			Thread.sleep(50);//?????????????????
-    		} catch (InterruptedException e) {
-    			// TODO Auto-generated catch block
-    			//e.printStackTrace();
-    		}
+    		continue;
     	}
+    	result = promise.get();
     	return promise;
     }
     /**
