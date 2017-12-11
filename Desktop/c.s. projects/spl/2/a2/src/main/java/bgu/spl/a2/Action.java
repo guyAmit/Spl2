@@ -1,7 +1,7 @@
 package bgu.spl.a2;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * an abstract class that represents an action that may be executed using the
@@ -17,12 +17,13 @@ import java.util.List;
 public abstract class Action<R> {
 	
 	protected Promise<R> promise = new Promise<>();
-	protected R result = null;
+	//protected R result = null;
 	//protected List<Action<R>> actions;
 	protected String actionName = "";
 	protected ActorThreadPool pool = null;
 	protected String actorId = "";
 	protected PrivateState actorState = null;
+	protected callback call = null;
 	/**
      * start handling the action - note that this method is protected, a thread
      * cannot call it directly.
@@ -42,15 +43,15 @@ public abstract class Action<R> {
     * public/private/protected
     *
     */
-   /*package*/ final void handle(ActorThreadPool pool, String actorId, PrivateState actorState) {
-	   if(this.pool == null)this.pool = pool;
-	   if(this.actorId.equals(""))this.actorId = actorId;
-	   if(this.actorState == null)this.actorState = actorState;
-	   start();//maby should call then
-	     /*for(Action action: actions){
-	    	 sendMessage(action, actorId, actorState); 
-	     }*/
-   }
+    /*package*/ final void handle(ActorThreadPool pool, String actorId, PrivateState actorState) {
+    	if(this.pool == null)this.pool = pool;
+    	if(this.actorId.equals(""))this.actorId = actorId;
+    	if(this.actorState == null)this.actorState = actorState;
+    	if(call != null)call.call();
+    	else {
+    		start();//should call then
+    	}
+    }
     
     
     /**
@@ -64,8 +65,15 @@ public abstract class Action<R> {
      * @param callback the callback to execute once all the results are resolved
      */
     protected final void then(Collection<? extends Action<?>> actions, callback callback) {
+    	this.call = callback;
+    	Action a=this;
+    	AtomicInteger i = new AtomicInteger(actions.size());
     	for(Action<?> action: actions){
-    		action.promise.subscribe(callback);
+    		action.promise.subscribe(()->{
+    			i.decrementAndGet();
+    			if(i.get()==0)
+    			{pool.submit(a, actorId, actorState);}
+    		});
     	}
     }
 
@@ -102,7 +110,7 @@ public abstract class Action<R> {
     	pool.submit(action, actorId, actorState);
     	while(!promise.isResolved()) {
     		try {
-    			Thread.sleep(50);
+    			Thread.sleep(50);//?????????????????
     		} catch (InterruptedException e) {
     			// TODO Auto-generated catch block
     			//e.printStackTrace();
