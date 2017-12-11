@@ -22,6 +22,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Guy-Amit/Desktop/junit/junit-4.10.jar"/>
+	<classpathentry kind="lib" path="C:/projects/spl/assignment 2/junit-4.10.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
