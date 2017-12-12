@@ -4,10 +4,7 @@
  * and open the template in the editor.
  */
 package bgu.spl.a2.sim;
-<<<<<<< HEAD
 import java.util.HashMap;
-=======
->>>>>>> guy
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
