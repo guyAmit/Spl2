@@ -66,6 +66,7 @@ public class ActorThreadPool {
 				}
 
 			}));
+			this.threads.set(i, null);
 		}
 	}	  
 		  
@@ -99,6 +100,7 @@ public class ActorThreadPool {
 	public void submit(Action<?> action, String actorId, PrivateState actorState) {
 		if(this.actions.containsKey(actorId)) {
 			this.actions.get(actorId).add(action);
+			this.actors.get(actorId).addRecord(action.getActionName());
 		}
 		else {
 			OneAccessQueue<Action> newQueue = new OneAccessQueue<Action>();

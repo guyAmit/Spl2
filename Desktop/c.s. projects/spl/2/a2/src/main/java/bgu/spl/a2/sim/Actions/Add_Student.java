@@ -10,7 +10,8 @@ public class Add_Student<R> extends Action<R> {
 	
 	@Override
 	protected void start() {
-	this.pool.getActors().put(actorId, actorState);
+		this.setActionName("Add Student");
+		this.complete(this.result);
 	//(StudentPrivateState)actorState);	
 	}
 }
