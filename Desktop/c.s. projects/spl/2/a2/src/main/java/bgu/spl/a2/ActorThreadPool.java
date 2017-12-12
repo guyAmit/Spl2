@@ -37,34 +37,36 @@ public class ActorThreadPool {
 	 */
 	public ActorThreadPool(int nthreads) {
 		// TODO: replace method body with real implementation
-		  this.actors= new ConcurrentHashMap<String,PrivateState>();
-		  this.actions = new ConcurrentHashMap<String,OneAccessQueue<Action>>();
-		  //this.actionsQueue = new ArrayList<OneAccessQueue<Action>>();
-		  this.threads = new ArrayList<Thread>();
-		  this.isShutDown = new AtomicBoolean(true);
-		  this.version = new VersionMonitor();
-		  this.threads.add(new Thread(()->{
-			  
-			  while(this.isShutDown.get()) { //should be true until changed by the shutdown method
-				  for (Map.Entry<String, OneAccessQueue<Action>> entry : actions.entrySet()) {
-					if(entry.getValue().tryToLock()) {
-						Action act = entry.getValue().dequeue();
-						String actorId = entry.getKey();
-						PrivateState state = this.getPrivaetState(actorId);
-						act.handle(this,actorId, state);
-						version.inc();
+		this.actors= new ConcurrentHashMap<String,PrivateState>();
+		this.actions = new ConcurrentHashMap<String,OneAccessQueue<Action>>();
+		//this.actionsQueue = new ArrayList<OneAccessQueue<Action>>();
+		this.threads = new ArrayList<Thread>();
+		this.isShutDown = new AtomicBoolean(true);
+		this.version = new VersionMonitor();
+		for(int i =0; i<nthreads; i++) {
+			this.threads.add(new Thread(()->{
+
+				while(this.isShutDown.get()) { //should be true until changed by the shutdown method
+					for (Map.Entry<String, OneAccessQueue<Action>> entry : actions.entrySet()) {
+						if(entry.getValue().tryToLock()) {
+							Action act = entry.getValue().dequeue();
+							String actorId = entry.getKey();
+							PrivateState state = this.getPrivaetState(actorId);
+							act.handle(this,actorId, state);
+							version.inc();
+						}
+						else continue;
 					}
-					else continue;
+					try {
+						version.await(version.getVersion()+1);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
-				  try {
-					version.await(version.getVersion()+1);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			  }
-			  
-		  }));
+
+			}));
+		}
 	}	  
 		  
 	/**
@@ -74,7 +76,6 @@ public class ActorThreadPool {
 	public Map<String, PrivateState> getActors(){
 		return actors;
 	}
-	
 	/**
 	 * getter for actor's private state
 	 * @param actorId actor's id
