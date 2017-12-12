@@ -3,6 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package bgu.spl.a2.sim;
 import java.util.HashMap;
 import java.io.FileNotFoundException;
