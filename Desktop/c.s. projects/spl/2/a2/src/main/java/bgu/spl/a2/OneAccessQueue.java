@@ -13,13 +13,10 @@ import java.util.concurrent.atomic.*;
 public class OneAccessQueue<E> extends LinkedList<E>{
 	
 	private AtomicBoolean isFree;
-	private String name;
-
 	
-	public OneAccessQueue(String name){
+	public OneAccessQueue(){
 		super();
 		isFree.set(true);
-		this.name=name;
 	}
 	
 	
@@ -27,10 +24,6 @@ public class OneAccessQueue<E> extends LinkedList<E>{
 	 * <h1>getName</h1>
 	 * @return the {@link #name} of the queue
 	 */
-	public String getName() {
-		return name;
-	}
-	
 	/**
 	 * <h1>isFree</h1>
 	 * <p>{@link #isFree} will return True if no other thread is working on the Queue</p>

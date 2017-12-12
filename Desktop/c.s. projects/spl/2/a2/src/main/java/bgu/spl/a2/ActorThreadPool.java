@@ -17,11 +17,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ActorThreadPool {
 	
-	private Map<Thread,AtomicBoolean> Threads; // hold all the threads, and a boolean representing whether they should stop working
-	private Map<String,PrivateState> privateStates; //<actorID,private state>
-	private ArrayList<OneAccessQueue<Action>> actionsQueue; //action Queues for each actor
-	private Map<String,OneAccessQueue<Action>> actors; // <actorID,actionQueue>
-	
+	private ArrayList<Thread> threads; // hold all the threads, and a boolean representing whether they should stop working
+	private AtomicBoolean isShutDown;
+	private Map<String,PrivateState> actors; //<actorID,private state>
+	//private ArrayList<OneAccessQueue<Action>> actionsQueue; //action Queues for each actor
+	private Map<String,OneAccessQueue<Action>> actions; // <actorID,actionQueue>
+	private VersionMonitor version;
 	/**
 	 * creates a {@link ActorThreadPool} which has nthreads. Note, threads
 	 * should not get started until calling to the {@link #start()} method.
@@ -36,25 +37,34 @@ public class ActorThreadPool {
 	 */
 	public ActorThreadPool(int nthreads) {
 		// TODO: replace method body with real implementation
-		  this.privateStates= new ConcurrentHashMap<String,PrivateState>();
-		  this.actors = new ConcurrentHashMap<String,OneAccessQueue<Action>>();
-		  this.actionsQueue = new ArrayList<>();
-		  this.Threads = new ConcurrentHashMap<Thread,AtomicBoolean>();
-		  this.Threads.put(new Thread(()->{
+		  this.actors= new ConcurrentHashMap<String,PrivateState>();
+		  this.actions = new ConcurrentHashMap<String,OneAccessQueue<Action>>();
+		  //this.actionsQueue = new ArrayList<OneAccessQueue<Action>>();
+		  this.threads = new ArrayList<Thread>();
+		  this.isShutDown = new AtomicBoolean(true);
+		  this.version = new VersionMonitor();
+		  this.threads.add(new Thread(()->{
 			  
-			  while(this.Threads.get(this).get()) { //should be true until changed by the shutdown method
-				  for (OneAccessQueue<Action> oneAccessQueue : actionsQueue) {
-					if(oneAccessQueue.tryToLock()) {
-						Action act = oneAccessQueue.dequeue();
-						String actorId = oneAccessQueue.getName();
-						PrivateState state = this.privateStates.get(actorId);
+			  while(this.isShutDown.get()) { //should be true until changed by the shutdown method
+				  for (Map.Entry<String, OneAccessQueue<Action>> entry : actions.entrySet()) {
+					if(entry.getValue().tryToLock()) {
+						Action act = entry.getValue().dequeue();
+						String actorId = entry.getKey();
+						PrivateState state = this.getPrivaetState(actorId);
 						act.handle(this,actorId, state);
+						version.inc();
 					}
 					else continue;
 				}
+				  try {
+					version.await(version.getVersion()+1);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			  }
 			  
-		  }),new AtomicBoolean(true));
+		  }));
 	}	  
 		  
 	/**
@@ -62,7 +72,7 @@ public class ActorThreadPool {
 	 * @return actors
 	 */
 	public Map<String, PrivateState> getActors(){
-		return privateStates;
+		return actors;
 	}
 	
 	/**
@@ -71,7 +81,7 @@ public class ActorThreadPool {
 	 * @return actor's private state
 	 */
 	public PrivateState getPrivaetState(String actorId){
-		return privateStates.get(actorId);
+		return actors.get(actorId);
 	}
 	
 	/**
@@ -86,14 +96,14 @@ public class ActorThreadPool {
 	 *            actor's private state (actor's information)
 	 */
 	public void submit(Action<?> action, String actorId, PrivateState actorState) {
-		if(this.actors.containsKey(actorId)) {
-			this.actors.get(actorId).add(action);
+		if(this.actions.containsKey(actorId)) {
+			this.actions.get(actorId).add(action);
 		}
 		else {
-			OneAccessQueue<Action> newQueue = new OneAccessQueue<Action>(actorId);
+			OneAccessQueue<Action> newQueue = new OneAccessQueue<Action>();
 			newQueue.enqueue(action);
-			this.actors.put(actorId, newQueue);
-			this.privateStates.put(actorId, actorState);
+			this.actions.put(actorId, newQueue);
+			this.actors.put(actorId, actorState);
 		}
 	}
 		
@@ -109,9 +119,7 @@ public class ActorThreadPool {
 	 *             if the thread that shut down the threads is interrupted
 	 */
 	public void shutdown() throws InterruptedException {
-		for (java.util.Map.Entry<Thread, AtomicBoolean> entry : this.Threads.entrySet()) {
-			entry.getValue().compareAndSet(true, false);
-		}
+			isShutDown.compareAndSet(true, false);
 	}
 
 	/**
@@ -119,8 +127,8 @@ public class ActorThreadPool {
 	 */
 	public void start() {
 		// TODO: replace method body with real implementation
-		for (java.util.Map.Entry<Thread, AtomicBoolean> entry : this.Threads.entrySet()) {
-			entry.getKey().start();
+		for (Thread entry : this.threads) {
+			entry.start();
 		}
 	}
 
