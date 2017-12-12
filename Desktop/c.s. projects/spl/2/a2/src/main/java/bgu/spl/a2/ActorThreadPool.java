@@ -58,7 +58,7 @@ public class ActorThreadPool {
 						else continue;
 					}
 					try {
-						version.await(version.getVersion()+1);
+						version.await(version.getVersion());
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
