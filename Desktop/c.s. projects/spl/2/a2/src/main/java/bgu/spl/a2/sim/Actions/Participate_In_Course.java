@@ -7,7 +7,6 @@ import java.util.ArrayList;
 
 import bgu.spl.a2.Action;
 import bgu.spl.a2.sim.Actions.subActions.*;
-import bgu.spl.a2.sim.Actions.subActions.ConformationAction;
 import bgu.spl.a2.sim.privateStates.CoursePrivateState;
 import bgu.spl.a2.sim.privateStates.StudentPrivateState;
 
