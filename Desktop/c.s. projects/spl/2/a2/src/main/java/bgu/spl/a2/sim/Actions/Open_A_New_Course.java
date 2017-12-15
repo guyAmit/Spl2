@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bgu.spl.a2.Action;
+import bgu.spl.a2.sim.Actions.subActions.ConformationAction;
 import bgu.spl.a2.sim.privateStates.CoursePrivateState;
 import bgu.spl.a2.sim.privateStates.DepartmentPrivateState;
 import bgu.spl.a2.sim.privateStates.StudentPrivateState;
@@ -35,6 +36,13 @@ public class Open_A_New_Course extends Action<Boolean> {
 	}
 	
 	
+	/**
+	 * <h1>start-Open_A_New_Course</h1>
+	 * <p>this method should create a new course in the department.<br>
+	 * 	we will do it by adding the new course to the department course list first<br>
+	 * and then we will send a dummy action to the newly created course actor to make<br>
+	 * sure it is really created </p>
+	 */
 	@Override
 	protected void start() {
 		ArrayList<Action<Boolean>> subActions = new ArrayList<>();

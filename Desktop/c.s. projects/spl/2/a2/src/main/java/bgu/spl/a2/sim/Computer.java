@@ -9,6 +9,9 @@ public class Computer {
 	long failSig;
 	long successSig;
 	
+	
+	
+	
 	public Computer(String computerType) {
 		this.computerType = computerType;
 	}
@@ -25,4 +28,29 @@ public class Computer {
 		//TODO: replace method body with real implementation
 		throw new UnsupportedOperationException("Not Implemented Yet.");
 	}
+	
+	public String getComputerType() {
+		return computerType;
+	}
+
+	public void setComputerType(String computerType) {
+		this.computerType = computerType;
+	}
+
+	public long getFailSig() {
+		return failSig;
+	}
+
+	public void setFailSig(long failSig) {
+		this.failSig = failSig;
+	}
+
+	public long getSuccessSig() {
+		return successSig;
+	}
+
+	public void setSuccessSig(long successSig) {
+		this.successSig = successSig;
+	}
+	
 }

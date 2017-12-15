@@ -62,4 +62,27 @@ public class CoursePrivateState extends PrivateState{
 			this.availableSpots+=spaces;
 		}
 	}
+	/**
+	 * <h1>register</h1>
+	 * assisting method for changing the private state<br>
+	 * of the course when a student is trying to register
+	 * @param studentId
+	 */
+	public void register(String studentId) {
+		this.regStudents.add(studentId);
+		this.registered++;
+		this.availableSpots--;
+	}
+	
+	/**
+	 * <h1>unRegister</h1>
+	 * assisting method for changing the private state<br>
+	 * of the course when a student is trying to unRegister
+	 * @param studentId
+	 */
+	public void unRegister(String studenId) {
+		this.regStudents.remove(studenId);
+		this.availableSpots++;
+		this.registered--;
+	}
 }

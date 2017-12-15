@@ -1,6 +1,7 @@
 package bgu.spl.a2.sim.privateStates;
 
 import java.util.HashMap;
+import java.util.List;
 
 import bgu.spl.a2.PrivateState;
 
@@ -35,5 +36,12 @@ public class StudentPrivateState extends PrivateState{
 	
 	public void setSignature(long signature) {
 		this.signature = signature;
+	}
+	
+	public boolean meetRequirements(List<String> courses) {
+		for (String courseId : courses) {
+			if(!this.grades.containsKey(courseId))
+					return false;		}
+		return true;
 	}
 }

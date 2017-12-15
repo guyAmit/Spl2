@@ -10,7 +10,7 @@ import bgu.spl.a2.sim.privateStates.CoursePrivateState;
 public class Open_new_spots extends Action<Object> {
 
 	/**
-	 * <h1>add student action</h1>
+	 * <h1>Open_new_spots action</h1>
 	 * <h2>general notes:</h2>>
 	 * 	this.actorState is the private state of the department
 	 *	this.actorId is the Id of the department

@@ -1,4 +1,4 @@
-package bgu.spl.a2.sim.Actions;
+package bgu.spl.a2.sim.Actions.subActions;
 
 import bgu.spl.a2.Action;
 
