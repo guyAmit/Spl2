@@ -27,6 +27,7 @@ public class Promise<T>{
 	private ArrayList<callback> callbacks;
 	private T resualt;
 	private AtomicBoolean isResolved;
+
 	
 	public Promise() {
 		this.callbacks=new ArrayList<>();

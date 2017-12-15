@@ -20,7 +20,6 @@ public class ActorThreadPool {
 	private ArrayList<Thread> threads; // hold all the threads, and a boolean representing whether they should stop working
 	private AtomicBoolean isShutDown;
 	private Map<String,PrivateState> actors; //<actorID,private state>
-	//private ArrayList<OneAccessQueue<Action>> actionsQueue; //action Queues for each actor
 	private Map<String,OneAccessQueue<Action>> actions; // <actorID,actionQueue>
 	private VersionMonitor version;
 	/**
@@ -39,7 +38,6 @@ public class ActorThreadPool {
 		// TODO: replace method body with real implementation
 		this.actors= new ConcurrentHashMap<String,PrivateState>();
 		this.actions = new ConcurrentHashMap<String,OneAccessQueue<Action>>();
-		//this.actionsQueue = new ArrayList<OneAccessQueue<Action>>();
 		this.threads = new ArrayList<Thread>();
 		this.isShutDown = new AtomicBoolean(true);
 		this.version = new VersionMonitor();
@@ -48,14 +46,13 @@ public class ActorThreadPool {
 
 				while(this.isShutDown.get()) { //should be true until changed by the shutdown method
 					for (Map.Entry<String, OneAccessQueue<Action>> entry : actions.entrySet()) {
-						if(entry.getValue().tryToLock()) {
-							Action act = entry.getValue().dequeue();
+						if(entry.getValue().tryToLockDequeue()) {
+							Action action = entry.getValue().dequeue();
+							if(action==null) continue;
 							String actorId = entry.getKey();
-							PrivateState state = this.getPrivaetState(actorId);
-							act.handle(this,actorId, state);
-							version.inc();
+							action.handle(this, actorId, this.getPrivaetState(actorId));
+							this.version.inc();
 						}
-						else continue;
 					}
 					try {
 						version.await(version.getVersion());
@@ -64,7 +61,9 @@ public class ActorThreadPool {
 						e.printStackTrace();
 					}
 				}
-
+				
+		
+				
 			}));
 		}
 	}	  
@@ -97,12 +96,17 @@ public class ActorThreadPool {
 	 *            actor's private state (actor's information)
 	 */
 	public void submit(Action<?> action, String actorId, PrivateState actorState) {
-		if(this.actions.containsKey(actorId)) {
-			this.actions.get(actorId).add(action);
+		OneAccessQueue<Action> actor =this.actions.get(actorId);
+		if(actor!=null) {
+			while(!actor.tryToLockEnqueue());
+			actor.enqueue(action);
 		}
 		else {
 			OneAccessQueue<Action> newQueue = new OneAccessQueue<Action>();
-			newQueue.enqueue(action);
+			if(action!=null) {
+				newQueue.tryToLockEnqueue();
+				newQueue.enqueue(action);
+			}
 			this.actions.put(actorId, newQueue);
 			this.actors.put(actorId, actorState);
 		}

@@ -18,7 +18,6 @@ public abstract class Action<R> {
 	
 	protected Promise<R> promise = new Promise<>();
 	protected R result = null;
-	//protected List<Action<R>> actions;
 	protected String actionName = "";
 	protected ActorThreadPool pool = null;
 	protected String actorId = "";
@@ -41,16 +40,18 @@ public abstract class Action<R> {
     * the same package can access it - you should *not* change it to
     * public/private/protected
     *
+    *if {@link #call}==null -> this is the first time we are calling the action.
+    *if not this is a continuation of a computation
     */
     /*package*/ final void handle(ActorThreadPool pool, String actorId, PrivateState actorState) {
     	if(this.pool == null)this.pool = pool;
     	if(this.actorId.equals(""))this.actorId = actorId;
     	if(this.actorState == null)this.actorState = actorState;
-    	if(call != null) {
-    		call.call();
+    	if(this.call != null) { 
+    		this.call.call();
     	}
     	else {
-    		start();//should call then and complete
+    		this.start();//should call then and complete
     	}
     }
     
@@ -72,7 +73,11 @@ public abstract class Action<R> {
     		action.promise.subscribe(()->{
     			i.decrementAndGet();
     			if(i.get()==0)
-    			{sendMessage(this, actorId, actorState);}
+    			{
+    				//the last SubAction that get called should enqueue the original 
+    				//action back into his queue
+    				this.sendMessage(this, actorId, actorState);
+    			}
     		});
     	}
     }
@@ -84,14 +89,14 @@ public abstract class Action<R> {
      * @param result - the action calculated result
      */
     protected final void complete(R result) {
-    	promise.resolve(result);
+    	this.promise.resolve(result);
     }
     
     /**
      * @return action's promise (result)
      */
     public final Promise<R> getResult() {
-    	return promise;
+    	return this.promise;
     }
     
     /**
@@ -107,12 +112,8 @@ public abstract class Action<R> {
      * @return promise that will hold the result of the sent action
      */
     public Promise<?> sendMessage(Action<?> action, String actorId, PrivateState actorState){
-    	pool.submit(action, actorId, actorState);
-    	while(!promise.isResolved()) {
-    		continue;
-    	}
-    	result = promise.get();
-    	return promise;
+    	this.pool.submit(action, actorId, actorState);
+    	return this.getResult();
     }
     /**
 	 * set action's name

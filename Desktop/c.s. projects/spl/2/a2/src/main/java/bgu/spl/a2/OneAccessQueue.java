@@ -12,11 +12,13 @@ import java.util.concurrent.atomic.*;
  */
 public class OneAccessQueue<E> extends LinkedList<E>{
 	
-	private AtomicBoolean isFree;
+	private AtomicBoolean frontLock;
+	private AtomicBoolean backLock;
 	
 	public OneAccessQueue(){
 		super();
-		isFree.set(true);
+		this.frontLock = new AtomicBoolean(true);
+		this.backLock = new AtomicBoolean(true);
 	}
 	
 	
@@ -24,13 +26,25 @@ public class OneAccessQueue<E> extends LinkedList<E>{
 	 * <h1>getName</h1>
 	 * @return the {@link #name} of the queue
 	 */
+	
+	
 	/**
-	 * <h1>isFree</h1>
-	 * <p>{@link #isFree} will return True if no other thread is working on the Queue</p>
+	 * <h1>isBackFree</h1>
+	 * <p>{@link #backLock} will return True if no other thread is working on the back of the Queue</p>
 	 * @return if the queue is free to work
 	 */
-	public Boolean isFree(){
-		return this.isFree.get();
+	public Boolean isBackFree(){
+		return this.backLock.get();
+	}
+	
+	
+	/**
+	 * <h1>isFree</h1>
+	 * <p>{@link #frontLock} will return True if no other thread is working on the front of the Queue</p>
+	 * @return if the queue is free to work
+	 */
+	public Boolean isFrontFree(){
+		return this.frontLock.get();
 	}
 	
 	/**
@@ -39,12 +53,17 @@ public class OneAccessQueue<E> extends LinkedList<E>{
 	 * 	if no one is working on the queue, the addition will go as <br>
 	 * 	planned, otherwise the method will return False </p>
 	 * @param e-will be used to hold actions
+	 * @pre in order to use this method properly you must use the {@link #tryToLockEequeue()} method first and get true
 	 * @return True if the addition was successful, False otherwise
 	 */
 	public  Boolean enqueue(E e) {
 		try {
-			super.addLast(e);
-			return true;
+			if(!this.backLock.get()) {
+				super.addLast(e);
+				this.backLock.compareAndSet(true, false);
+				return true;
+			}
+			return false;
 		}catch (Exception t) {
 			return false;
 		}
@@ -55,13 +74,13 @@ public class OneAccessQueue<E> extends LinkedList<E>{
 	 * <p>the method tries to remove the first item in the Queue,<br>
 	 * 	if no one is working on the queue, the removal will go as <br>
 	 * 	planned, otherwise the method will return <b>Null</b> </p></p>
-	 * @Pre the Queue should be locked on the using thread, i.e. the user locked it by using the {@link #tryToLock()} method
+	 * @pre in order to use this method properly you must use the {@link #tryToLockDequeue()} method first and get true
 	 * @return the first item in the Queue
 	 */
 	public E dequeue() {
-		if(!this.isFree()) {
+		if(!this.frontLock.get()) {
 			E returnVal = super.removeFirst();
-			this.isFree.compareAndSet(false, true);
+			this.frontLock.compareAndSet(true, false);
 			return returnVal;
 		}
 		else {
@@ -70,27 +89,34 @@ public class OneAccessQueue<E> extends LinkedList<E>{
 	}
 	
 	/**
-	 * <h1>tryToLock</h1>
-	 * <p>the method will try to get accesses to the queue<br>
-	 * if it succeeds it will lock the Queue,and return True<br>
-	 * we will achieve that using the <b>compareAndSet</b> method<br>
-	 * <b>use this method first, do not deqeueu without using this method!!</b></p>
-	 * @return True if lock was a success
+	 * <h1>tryToLockEnqueue</h1>
+	 * <p>trying to lock the back of the queue in order to enqueue</p>
+	 * @return true if the back has been locked 
 	 */
-	 public Boolean tryToLock() {
+	public boolean tryToLockEnqueue() {
 		try {
-			if(this.isFree.compareAndSet(true, false)) {
-				return true;
-			}
-			else {
-				return false;
-			}
-		}catch (Exception e) {
-			return false;
+			return this.backLock.compareAndSet(true, false);
+		}catch(Exception e){
+			
 		}
+		return false;
 	}
-	 
-	 
+	
+	
+	/**
+	 * <h1>tryToLockDequeue</h1>
+	 * <p>trying to lock the front of the queue in order to dequeue</p>
+	 * @return true if the front has been locked 
+	 */
+	public boolean tryToLockDequeue() {
+		try {
+			return this.frontLock.compareAndSet(true, false);
+		}catch(Exception e){
+			
+		}
+		return false;
+	}
+
 	 /**
 	  * <h1>length</h1>
 	  * @return the length of the queue

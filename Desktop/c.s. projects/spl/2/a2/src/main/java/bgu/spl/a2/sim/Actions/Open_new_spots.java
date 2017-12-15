@@ -1,0 +1,43 @@
+package bgu.spl.a2.sim.Actions;
+
+import bgu.spl.a2.Action;
+import bgu.spl.a2.sim.privateStates.CoursePrivateState;
+/**
+ * 
+ * @author Guy-Amit
+ *
+ */
+public class Open_new_spots extends Action<Object> {
+
+	/**
+	 * <h1>add student action</h1>
+	 * <h2>general notes:</h2>>
+	 * 	this.actorState is the private state of the department
+	 *	this.actorId is the Id of the department
+	*/
+	
+	private String courseId;
+	private CoursePrivateState coursePrivateState;
+	private int spaces;
+	
+	public Open_new_spots(String courseId,int spaces) {
+		this.courseId=courseId;
+		this.coursePrivateState=(CoursePrivateState)this.pool.getPrivaetState(courseId); 
+	}
+	
+	/**
+	 * <h1>start-open new spots</h1>
+	 * check if the course exists, if it does and it is not closed<br>
+	 * this method will directly add new available spots in the course
+	 */
+	@Override
+	public void start() {
+		if(this.coursePrivateState!=null) {
+			if(this.coursePrivateState.getAvailableSpots()!=-1) {
+				this.coursePrivateState.addSpots(this.spaces);
+			}
+			else {System.out.println("course is closed");}
+			}
+		else {System.out.println("course does not exists");}
+	}
+}

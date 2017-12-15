@@ -49,4 +49,17 @@ public class CoursePrivateState extends PrivateState{
 	public List<String> getPrequisites() {
 		return prequisites;
 	}
+	
+	/**
+	 * <h1></h1>
+	 * open new spots to the course
+	 * @see the sync is to prevent other threads from changing the number of
+	 * 		Available spots in the course while this thread is changing it
+	 * @param spaces
+	 */
+	public void addSpots(int spaces) {
+		synchronized(this.availableSpots) {
+			this.availableSpots+=spaces;
+		}
+	}
 }

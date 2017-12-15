@@ -44,16 +44,12 @@ public class VersionMonitor {
 	 *in order to use {@link #notifyAll()} one must be synchronized on the object</p>
 	 *@throws IllegalMonitorStateException
 	 */
-     public void inc() throws IllegalMonitorStateException {
+    public void inc() throws IllegalMonitorStateException {
     	int v = this.version.get();
-        this.version.compareAndSet(v,v+1);
-        synchronized (this) {
-        	try {
-        		this.notifyAll();
-        	}catch (IllegalMonitorStateException e) {
-				e.printStackTrace();
-			}
-        }
+    	this.version.compareAndSet(v,v+1);
+    	synchronized (this) {
+    		this.notifyAll();
+    	}
     }
 
 	/**
