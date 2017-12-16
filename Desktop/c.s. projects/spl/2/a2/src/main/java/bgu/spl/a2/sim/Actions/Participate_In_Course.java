@@ -25,7 +25,7 @@ public class Participate_In_Course extends Action<Boolean> {
 	
 	private String studendId;
 	private StudentPrivateState studentPrivateState;
-	private Integer grade;
+	private Integer grade;//optional
 	
 	public Participate_In_Course(String studentId,int grade) {
 		this.studendId=studentId;
@@ -36,6 +36,7 @@ public class Participate_In_Course extends Action<Boolean> {
 	public Participate_In_Course(String studentId) {
 		this.studendId=studentId;
 		this.studentPrivateState = (StudentPrivateState)this.pool.getPrivaetState(studentId);
+		this.grade= new Integer(0);
 	}
 	
 	/**
@@ -44,7 +45,7 @@ public class Participate_In_Course extends Action<Boolean> {
 	 * it will do so by sending a sub action to the student actor<br>
 	 * to check if he meets the prequisites of the course, if he <br>
 	 * does, the sub action will update the student private state<br>
-	 * and return a massage to the original action the re registration<br>
+	 * and return a massage to the original {@link #Participate_In_Course} action the registration<br>
 	 * Succeeded 
 	 */
 	@Override
@@ -57,6 +58,7 @@ public class Participate_In_Course extends Action<Boolean> {
 				conf = new RegistrationConformation(actorId);
 			else conf = new RegistrationConformation(actorId, grade);
 			subActions.add(conf);
+			this.sendMessage(conf,this.studendId, studentPrivateState);
 			this.then(subActions, ()->{
 				//will be executed when all the SubActions will finish
 				//and also after the action will get back into his original

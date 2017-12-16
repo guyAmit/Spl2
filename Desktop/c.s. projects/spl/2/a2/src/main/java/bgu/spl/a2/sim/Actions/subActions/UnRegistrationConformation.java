@@ -34,7 +34,7 @@ public class UnRegistrationConformation extends Action<Boolean> {
 	
 	/**
 	 * <h1>start-unRegistrationConformation</h1>
-	 * simple confirmation action for the unRegister action,checks if <br>
+	 * simple confirmation action for the {@link #Unregister} action,checks if <br>
 	 * the student is indeed registered, if he is, this method will unregister him<br>
 	 * and send the result back to the original action
 	 */

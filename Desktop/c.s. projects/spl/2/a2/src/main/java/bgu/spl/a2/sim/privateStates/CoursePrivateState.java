@@ -51,7 +51,17 @@ public class CoursePrivateState extends PrivateState{
 	}
 	
 	/**
-	 * <h1></h1>
+	 * <h1>closeCourse</h1>
+	 * change the private state of this course<br>
+	 * to a closed one
+	 */
+	public void closeCourse() {
+		this.regStudents.clear();
+		this.availableSpots=-1;
+		this.registered=0;
+	}
+	/**
+	 * <h1>addSpots</h1>
 	 * open new spots to the course
 	 * @see the sync is to prevent other threads from changing the number of
 	 * 		Available spots in the course while this thread is changing it
