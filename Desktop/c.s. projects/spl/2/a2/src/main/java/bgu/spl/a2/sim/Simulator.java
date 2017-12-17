@@ -16,12 +16,13 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import bgu.spl.a2.Action;
 import bgu.spl.a2.ActorThreadPool;
 import bgu.spl.a2.PrivateState;
+import bgu.spl.a2.sim.Actions.Add_Student;
 import bgu.spl.a2.sim.Actions.Open_A_New_Course;
-
+import bgu.spl.a2.sim.privateStates.DepartmentPrivateState;
+import bgu.spl.a2.sim.ActionsCreator;
 import org.json.simple.*;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.junit.internal.matchers.CombinableMatcher;
 
 
 /**
@@ -103,20 +104,11 @@ public class Simulator {
 	 * @return array list of actions
 	 */
 	@SuppressWarnings("unchecked")
-	public static ArrayList<Open_A_New_Course<Boolean>> initPhase1Actions(JSONObject obj) {
+	public static void initPhase1Actions(JSONObject obj) {
 		JSONArray Phase1ActionsArray = (JSONArray)obj.get("Phase 1");
-		ArrayList<Open_A_New_Course<Boolean>> actions= new ArrayList<>();
 		Phase1ActionsArray.forEach(entry -> {
-			String Department = ((JSONObject)entry).get("Department").toString();
-			String Course = ((JSONObject)entry).get("Course").toString();
-			int spaces = (int)((JSONObject)entry).get("space");
-			JSONArray PrerequisitesJson = (JSONArray)(((JSONObject)entry)).get("Prerequisites");
-			ArrayList<String> Prerequisites  = new ArrayList<>();
-			PrerequisitesJson.forEach(pre ->{Prerequisites.add((String)pre);});
-			Open_A_New_Course open;
-			//actions.add(open);
+			ActionsCreator.createOpenCourseAction((JSONObject)entry, actorThreadPool);
 		});
-		return actions;
 	}
 	
 	
@@ -128,24 +120,44 @@ public class Simulator {
 	 * @return array list of actions
 	 */
 	@SuppressWarnings("unchecked")
-	public static ArrayList<Action> initPhase2Actions(JSONObject obj) {
+	public static void initPhase2Actions(JSONObject obj) {
 		JSONArray Phase1ActionsArray = (JSONArray)obj.get("Phase 2");
-		ArrayList<Action> actions= new ArrayList<>();
+		ArrayList<Action<?>> actions= new ArrayList<>();
 		Phase1ActionsArray.forEach(entry -> {
 			String type = ((JSONObject)entry).get("Action").toString();
-			//TODO: find out what kind of actions are there in phase1
-			Action c=null;
-			actions.add(c);
+			if(type.compareTo("Add Student")==1) {
+				ActionsCreator.createAddStudentAction((JSONObject)entry, actorThreadPool);
+			}
+			if(type.compareTo("Open Course")==1) {
+				ActionsCreator.createOpenCourseAction((JSONObject)entry, actorThreadPool);
+			}
+			if(type.compareTo("Participate In Course")==1) {
+				ActionsCreator.createAddStudentAction((JSONObject)entry, actorThreadPool);
+			}
+			if(type.compareTo("Add Spaces")==1) {
+				ActionsCreator.createAddStudentAction((JSONObject)entry, actorThreadPool);
+			}
+			if(type.compareTo("Register With Preferences")==1) {
+				ActionsCreator.createAddStudentAction((JSONObject)entry, actorThreadPool);
+			}
+			if(type.compareTo("Unregister")==1) {
+				ActionsCreator.createAddStudentAction((JSONObject)entry, actorThreadPool);
+			}
+			if(type.compareTo("Close Course")==1) {
+				ActionsCreator.createAddStudentAction((JSONObject)entry, actorThreadPool);
+			}
+			if(type.compareTo("Administrative Check")==1) {
+				ActionsCreator.createAddStudentAction((JSONObject)entry, actorThreadPool);
+			}
+		
 		});
-		return actions;
+		
 	}
 	
 	
 	public static  void main(String [] args) throws ParseException{
 		//TODO: replace method body with real implementation
 		ArrayList<Computer> computers;
-		ArrayList<Action> Phase1Actions;
-		ArrayList<Action> Phase2Actions;
 		JSONParser parser = new JSONParser();
 		try(FileReader reader = new FileReader(args[0])){
 			Object jObj = parser.parse(reader);

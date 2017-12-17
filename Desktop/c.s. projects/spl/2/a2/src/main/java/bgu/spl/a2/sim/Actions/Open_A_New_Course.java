@@ -28,7 +28,7 @@ public class Open_A_New_Course extends Action<Boolean> {
 	private CoursePrivateState coursePrivateState;
 	private int spaces;
 	
-	public Open_A_New_Course(String CourseId,int spaces,List<String> prequisites ) {
+	public Open_A_New_Course(String courseId,int spaces,List<String> prequisites ) {
 		this.courseId=courseId;
 		this.spaces=spaces;
 		this.coursePrivateState = new CoursePrivateState(spaces,0,

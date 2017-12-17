@@ -25,8 +25,8 @@ public class Add_Student extends Action<Boolean> {
 	private String studentId;
 	private StudentPrivateState studentPrivateState;
 
-	public  Add_Student(String StudentId) {
-		this.studentId=StudentId;
+	public  Add_Student(String studentId) {
+		this.studentId=studentId;
 		this.studentPrivateState = new StudentPrivateState();
 	}
 	
