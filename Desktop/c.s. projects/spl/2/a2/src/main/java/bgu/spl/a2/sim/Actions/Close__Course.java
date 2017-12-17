@@ -40,7 +40,7 @@ public class Close__Course extends Action<Boolean> {
 			ArrayList<Action<Boolean>> subActions = new ArrayList<>();
 			//sending a sub action to the course actor- telling him to remove all student from the course
 			CloseCourseConformation conf = new CloseCourseConformation();
-			this.sendMessage(conf,this.courseId, this.coursePrivateState);
+			this.pool.submit(conf,this.courseId, this.coursePrivateState);
 			subActions.add(conf);
 			this.then(subActions,()->{
 				//will be executed when all the SubActions will finish

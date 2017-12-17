@@ -113,7 +113,8 @@ public abstract class Action<R> {
      */
     public Promise<?> sendMessage(Action<?> action, String actorId, PrivateState actorState){
     	this.pool.submit(action, actorId, actorState);
-    	return this.getResult();
+    	//TODO: need to replace with real implementation
+    	return null;
     }
     /**
 	 * set action's name

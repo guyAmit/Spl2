@@ -12,8 +12,8 @@ public class Open_new_spots extends Action<Object> {
 	/**
 	 * <h1>Open_new_spots action</h1>
 	 * <h2>general notes:</h2>>
-	 * 	this.actorState is the private state of the department
-	 *	this.actorId is the Id of the department
+	 * 	this.actorState is the private state of the course
+	 *	this.actorId is the Id of the course
 	*/
 	
 	private String courseId;
@@ -22,7 +22,7 @@ public class Open_new_spots extends Action<Object> {
 	
 	public Open_new_spots(String courseId,int spaces) {
 		this.courseId=courseId;
-		this.coursePrivateState=(CoursePrivateState)this.pool.getPrivaetState(courseId); 
+		this.coursePrivateState=(CoursePrivateState)this.actorState; 
 	}
 	
 	/**

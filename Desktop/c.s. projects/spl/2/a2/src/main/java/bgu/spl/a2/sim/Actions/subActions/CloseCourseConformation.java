@@ -31,7 +31,7 @@ public class CloseCourseConformation extends Action<Boolean> {
 		for (String studentId : studentsIds) {
 			UnRegistrationConformation conf = new UnRegistrationConformation(this.actorId);
 			StudentPrivateState studentPrivateState = (StudentPrivateState)this.pool.getActors().get(studentId);
-			this.sendMessage(conf,studentId, studentPrivateState);
+			this.pool.submit(conf,studentId, studentPrivateState);
 			subActions.add(conf);
 		}
 		this.then(subActions, ()->{

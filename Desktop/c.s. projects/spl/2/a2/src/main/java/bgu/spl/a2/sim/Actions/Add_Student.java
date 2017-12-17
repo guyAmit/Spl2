@@ -42,7 +42,7 @@ public class Add_Student extends Action<Boolean> {
 		ArrayList<Action<Boolean>> subActions = new ArrayList<>();
 		//sending a sub action to the student actor to check that he was indeed created
 		ConformationAction conf = new ConformationAction();
-		this.sendMessage(conf, studentId, studentPrivateState);
+		this.pool.submit(conf, studentId, studentPrivateState);
 		subActions.add((Action<Boolean>) conf);
 		this.then(subActions, ()->{
 			//will be executed when all the SubActions will finish

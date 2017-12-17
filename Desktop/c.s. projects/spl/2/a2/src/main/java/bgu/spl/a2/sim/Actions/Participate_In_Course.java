@@ -58,7 +58,7 @@ public class Participate_In_Course extends Action<Boolean> {
 				conf = new RegistrationConformation(actorId);
 			else conf = new RegistrationConformation(actorId, grade);
 			subActions.add(conf);
-			this.sendMessage(conf,this.studendId, studentPrivateState);
+			this.pool.submit(conf,this.studendId, studentPrivateState);
 			this.then(subActions, ()->{
 				//will be executed when all the SubActions will finish
 				//and also after the action will get back into his original
