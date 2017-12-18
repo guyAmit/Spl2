@@ -60,7 +60,7 @@ public class OneAccessQueue<E> extends LinkedList<E>{
 		try {
 			if(!this.backLock.get()) {
 				super.addLast(e);
-				this.backLock.compareAndSet(true, false);
+				this.backLock.compareAndSet(false, true);
 				return true;
 			}
 			return false;
@@ -80,7 +80,7 @@ public class OneAccessQueue<E> extends LinkedList<E>{
 	public E dequeue() {
 		if(!this.frontLock.get()) {
 			E returnVal = super.removeFirst();
-			this.frontLock.compareAndSet(true, false);
+			this.frontLock.compareAndSet(false, true);
 			return returnVal;
 		}
 		else {
@@ -123,6 +123,11 @@ public class OneAccessQueue<E> extends LinkedList<E>{
 	  */
 	 public int length() {
 		 return super.size();
+	 }
+	 
+	 @Override
+	 public String toString() {
+		 return "backLock:"+this.backLock.get()+" frontLock:"+this.frontLock.get()+"\n "+super.toString();
 	 }
 
 

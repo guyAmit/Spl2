@@ -22,9 +22,9 @@ public class Register_With_Preferences extends Action<Boolean> {
 	private ArrayList<String> preferences;
 	private ArrayList<Integer> grades;
 	
-	public Register_With_Preferences(ArrayList<String> preferences, List<Integer> Grades) {
+	public Register_With_Preferences(ArrayList<String> preferences, ArrayList<Integer> Grades) {
 		this.preferences=preferences;
-		this.grades=grades;
+		this.grades=Grades;
 	}
 	
 	public Register_With_Preferences(ArrayList<String> preferences) {
@@ -33,9 +33,9 @@ public class Register_With_Preferences extends Action<Boolean> {
 	
 	/**
 	 * <h1>start-Register_With_Preferences</h1>
-	 * the action will start by taking the first course of the list and try to register to it,<br>
-	 * if it will not succeed it will enqueue it self back into the queue and do the same with the <br>
-	 * next courses.
+	 * the action will start by taking the first course of the list(and removing it from the list)<br>
+	 *  and try to register to it,by using the {@link #Participate_In_Course} action. if it will not<br>
+	 *   succeed it will enqueue it self back into the queue, and do the same with the next courses.
 	 */
 	@Override
 	public void start() {

@@ -73,8 +73,8 @@ public class Simulator {
 	 * @return {@link #actorThreadPool}
 	 */
 	public static ActorThreadPool initThreadPool(JSONObject obj) {
-		int nThreads = (Integer)obj.get("threads");
-		ActorThreadPool pool = new ActorThreadPool(nThreads);
+		String nThreads = obj.get("threads").toString();
+		ActorThreadPool pool = new ActorThreadPool(Integer.parseInt(nThreads));
 		return pool;		
 	}
 	
@@ -91,10 +91,12 @@ public class Simulator {
 		ArrayList<Computer> computers= new ArrayList<>();
 		CompSjonArray.forEach(entry -> {
 			String type = ((JSONObject)entry).get("Type").toString();
-			int Sig_Success=(int)((JSONObject)entry).get("Sig Success");
-			int Sig_Fail=(int)((JSONObject)entry).get("Sig Fail");
+			int Sig_Success=Integer.parseInt(((JSONObject)entry).get("Sig Success").toString());
+			int Sig_Fail=Integer.parseInt(((JSONObject)entry).get("Sig Fail").toString());
 			//TODO: create a constructor for computer that also recievse the signatures
 			Computer c  = new Computer(type);
+			c.setFailSig(Sig_Fail);
+			c.setSuccessSig(Sig_Success);
 			computers.add(c);
 		});
 		return computers;
@@ -111,7 +113,31 @@ public class Simulator {
 	public static void initPhase1Actions(JSONObject obj) {
 		JSONArray Phase1ActionsArray = (JSONArray)obj.get("Phase 1");
 		Phase1ActionsArray.forEach(entry -> {
-			ActionsCreator.createOpenCourseAction((JSONObject)entry, actorThreadPool);
+			String type = ((JSONObject)entry).get("Action").toString();
+			if(type.compareTo("Add Student")==0) {//#done
+				ActionsCreator.createAddStudentAction((JSONObject)entry, actorThreadPool);
+			}
+			else if(type.compareTo("Open Course")==0) {//#done
+				ActionsCreator.createOpenCourseAction((JSONObject)entry, actorThreadPool);
+			}
+			else if(type.compareTo("Participate In Course")==0) {//#done
+				ActionsCreator.createParticipateInCourseAction((JSONObject)entry, actorThreadPool);
+			}
+			else if(type.compareTo("Add Spaces")==0) {//#done
+				ActionsCreator.createAddSpacesAction((JSONObject)entry, actorThreadPool);
+			}
+			else if(type.compareTo("Register With Preferences")==0) {//#done
+				ActionsCreator.createRegisterWithPreferncesAction((JSONObject)entry, actorThreadPool);
+			}
+			else if(type.compareTo("Unregister")==0) {//#done
+				ActionsCreator.createUnregisterAction((JSONObject)entry, actorThreadPool);
+			}
+			else if(type.compareTo("Close Course")==0) {//#done
+				ActionsCreator.createCloseCourseAction((JSONObject)entry, actorThreadPool);
+			}
+			else if(type.compareTo("Administrative Check")==0) {
+				ActionsCreator.createAddStudentAction((JSONObject)entry, actorThreadPool);
+			}
 		});
 	}
 	
@@ -128,28 +154,28 @@ public class Simulator {
 		ArrayList<Action<?>> actions= new ArrayList<>();
 		Phase1ActionsArray.forEach(entry -> {
 			String type = ((JSONObject)entry).get("Action").toString();
-			if(type.compareTo("Add Student")==1) {//#done
+			if(type.compareTo("Add Student")==0) {//#done
 				ActionsCreator.createAddStudentAction((JSONObject)entry, actorThreadPool);
 			}
-			if(type.compareTo("Open Course")==1) {//#done
+			if(type.compareTo("Open Course")==0) {//#done
 				ActionsCreator.createOpenCourseAction((JSONObject)entry, actorThreadPool);
 			}
-			if(type.compareTo("Participate In Course")==1) {//#done
+			else if(type.compareTo("Participate In Course")==0) {//#done
 				ActionsCreator.createParticipateInCourseAction((JSONObject)entry, actorThreadPool);
 			}
-			if(type.compareTo("Add Spaces")==1) {//#done
+			else if(type.compareTo("Add Spaces")==0) {//#done
 				ActionsCreator.createAddSpacesAction((JSONObject)entry, actorThreadPool);
 			}
-			if(type.compareTo("Register With Preferences")==1) {//#done
+			else if(type.compareTo("Register With Preferences")==0) {//#done
 				ActionsCreator.createRegisterWithPreferncesAction((JSONObject)entry, actorThreadPool);
 			}
-			if(type.compareTo("Unregister")==1) {//#done
+			else if(type.compareTo("Unregister")==0) {//#done
 				ActionsCreator.createUnregisterAction((JSONObject)entry, actorThreadPool);
 			}
-			if(type.compareTo("Close Course")==1) {//#done
+			else if(type.compareTo("Close Course")==0) {//#done
 				ActionsCreator.createCloseCourseAction((JSONObject)entry, actorThreadPool);
 			}
-			if(type.compareTo("Administrative Check")==1) {
+			else if(type.compareTo("Administrative Check")==0) {
 				ActionsCreator.createAddStudentAction((JSONObject)entry, actorThreadPool);
 			}
 		
@@ -158,7 +184,7 @@ public class Simulator {
 	}
 	
 	
-	public static  void main(String [] args) throws ParseException{
+	public static  void main(String [] args) {
 		//TODO: replace method body with real implementation
 		ArrayList<Computer> computers;
 		JSONParser parser = new JSONParser();
@@ -166,15 +192,16 @@ public class Simulator {
 			Object jObj = parser.parse(reader);
 			attachActorThreadPool(initThreadPool((JSONObject)jObj));
 			computers = initComputers((JSONObject)jObj);
-			initPhase1Actions((JSONObject)jObj);
-			initPhase2Actions((JSONObject)jObj);
-			start();
+			initPhase1Actions((JSONObject)jObj); //phase1 parsing is working
+			initPhase2Actions((JSONObject)jObj); 
+			
+			//start();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }catch(ParseException e) {
-        	
+        	e.printStackTrace();
         }
 		
 		

@@ -4,6 +4,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import bgu.spl.a2.sim.privateStates.DepartmentPrivateState;
+
 /**
  * represents an actor thread pool - to understand what this class does please
  * refer to your assignment.
@@ -20,7 +22,7 @@ public class ActorThreadPool {
 	private ArrayList<Thread> threads; // hold all the threads, and a boolean representing whether they should stop working
 	private AtomicBoolean isShutDown;
 	private Map<String,PrivateState> actors; //<actorID,private state>
-	private Map<String,OneAccessQueue<Action>> actions; // <actorID,actionQueue>
+	private Map<String,OneAccessQueue<Action<?>>> actions; // <actorID,actionQueue>
 	private VersionMonitor version;
 	/**
 	 * creates a {@link ActorThreadPool} which has nthreads. Note, threads
@@ -37,7 +39,7 @@ public class ActorThreadPool {
 	public ActorThreadPool(int nthreads) {
 		// TODO: replace method body with real implementation
 		this.actors= new ConcurrentHashMap<String,PrivateState>();
-		this.actions = new ConcurrentHashMap<String,OneAccessQueue<Action>>();
+		this.actions = new ConcurrentHashMap<String,OneAccessQueue<Action<?>>>();
 		this.threads = new ArrayList<Thread>();
 		this.isShutDown = new AtomicBoolean(true);
 		this.version = new VersionMonitor();
@@ -45,7 +47,7 @@ public class ActorThreadPool {
 			this.threads.add(new Thread(()->{
 
 				while(this.isShutDown.get()) { //should be true until changed by the shutdown method
-					for (Map.Entry<String, OneAccessQueue<Action>> entry : actions.entrySet()) {
+					for (Map.Entry<String, OneAccessQueue<Action<?>>> entry : actions.entrySet()) {
 						if(entry.getValue().tryToLockDequeue()) {
 							Action action = entry.getValue().dequeue();
 							if(action==null) continue;
@@ -94,21 +96,28 @@ public class ActorThreadPool {
 	 *            corresponding actor's id
 	 * @param actorState
 	 *            actor's private state (actor's information)
+	 * @see if the actorId is not in the private states map, thats mean that we need to crete<br>
+	 * 		a new department private state because there are no other options.
 	 */
 	public void submit(Action<?> action, String actorId, PrivateState actorState) {
-		OneAccessQueue<Action> actor =this.actions.get(actorId);
-		if(actor!=null) {
-			while(!actor.tryToLockEnqueue());
-			actor.enqueue(action);
+		OneAccessQueue<Action<?>> actor = this.actions.get(actorId);
+		if(actor!=null & actorState!=null) {
+			Boolean lock=false;
+			do{
+				lock=actor.tryToLockEnqueue();
+			}while(!lock);
+			actor.enqueue(action);			
+			this.actors.put(actorId, actorState);
 		}
 		else {
-			OneAccessQueue<Action> newQueue = new OneAccessQueue<Action>();
+			OneAccessQueue<Action<?>> newQueue = new OneAccessQueue<Action<?>>();
 			if(action!=null) {
 				newQueue.tryToLockEnqueue();
 				newQueue.enqueue(action);
 			}
+			DepartmentPrivateState depratmentPrivateState = new DepartmentPrivateState();
 			this.actions.put(actorId, newQueue);
-			this.actors.put(actorId, actorState);
+			this.actors.put(actorId, depratmentPrivateState);
 		}
 	}
 		

@@ -33,13 +33,13 @@ public class ActionsCreator {
 	public static void createOpenCourseAction(JSONObject jsonEntry,ActorThreadPool actorThreadPool) {
 		String courseId=jsonEntry.get("Course").toString();
 		String departmentId=jsonEntry.get("Department").toString();
-		int spaces = (int)jsonEntry.get("space");
+		int spaces = Integer.parseInt(jsonEntry.get("Space").toString());
 		JSONArray PrerequisitesJson = (JSONArray)(jsonEntry).get("Prerequisites");
 		ArrayList<String> prequisites  = new ArrayList<>();
 		PrerequisitesJson.forEach(pre ->{prequisites.add((String)pre);});
 		DepartmentPrivateState departmentPrivateState = (DepartmentPrivateState)actorThreadPool.getPrivaetState(departmentId);
 		Open_A_New_Course openCourseAction = new Open_A_New_Course(courseId, spaces, prequisites);
-		actorThreadPool.submit(openCourseAction, departmentId, departmentPrivateState);
+		actorThreadPool.submit(openCourseAction, departmentId,departmentPrivateState);
 	}
 	
 	public static void createParticipateInCourseAction(JSONObject jsonEntry,ActorThreadPool actorThreadPool) {
@@ -48,8 +48,11 @@ public class ActionsCreator {
 		String courseId = jsonEntry.get("Course").toString();
 		CoursePrivateState coursePrivateState =(CoursePrivateState)actorThreadPool.getPrivaetState(courseId);
 		int grade;
-		if(jsonEntry.get("grade")!=null) {
-			grade=(int)jsonEntry.get("Grade");
+		if(jsonEntry.get("Grade")!=null) {
+			JSONArray gradeJson = (JSONArray)(jsonEntry).get("Grade");
+			ArrayList<Integer> gradeArray =new ArrayList<>();
+			gradeJson.forEach(entry->{gradeArray.add(Integer.parseInt(entry.toString()));});
+			grade=gradeArray.get(0);
 			participateInCourseAction = new Participate_In_Course(studentId, grade);
 		}
 		else{
@@ -68,7 +71,7 @@ public class ActionsCreator {
 		Register_With_Preferences registerWithPrefernceAction;
 		if(gradesJson!=null) {
 			ArrayList<Integer> grades = new ArrayList<>();
-			gradesJson.forEach(entry->{grades.add((Integer)entry);});
+			gradesJson.forEach(entry->{grades.add(Integer.parseInt(entry.toString()));});
 			registerWithPrefernceAction = new Register_With_Preferences(preferences,grades);
 		}
 		else{
