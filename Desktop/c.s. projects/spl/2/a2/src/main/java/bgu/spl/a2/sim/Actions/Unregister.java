@@ -38,6 +38,14 @@ public class Unregister<R> extends Action<R> {
 		});
 		complete((R) new Object());
 	}
+	/**
+	 * SHOULD BE CALLED BEFORE START
+	 * 
+	 * 
+	 * @param nameOfStudent
+	 * sets the field nameOfStudent which is the name of the student which is going to 
+	 * be unregistered of the course to a new String value
+	 */
 	public void NameToUnregister(String nameOfStudent) {
 		this.nameOfStudent = nameOfStudent;
 	}

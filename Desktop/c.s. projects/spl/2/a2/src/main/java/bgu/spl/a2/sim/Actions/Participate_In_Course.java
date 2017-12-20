@@ -23,7 +23,7 @@ public class Participate_In_Course<R> extends Action<R> {
 	private CoursePrivateState courseState = (CoursePrivateState)pool.getActors().get(actorId);
 	private StudentPrivateState studentState = (StudentPrivateState) actorState;
 	private AtomicBoolean canRegister = new AtomicBoolean(true);
-	private AtomicBoolean registerd = new AtomicBoolean(false);
+	private AtomicBoolean okToRegister = new AtomicBoolean(false);
 	private List<Action<?>> actions = new ArrayList<Action<?>>();
 	
 	@SuppressWarnings("unchecked")
@@ -47,7 +47,7 @@ public class Participate_In_Course<R> extends Action<R> {
 					courseState.getRegStudents().add(studentName);
 					courseState.setAvailableSpots(courseState.getAvailableSpots() - 1);
 					studentState.getGrades().put(actorId,grade);
-					registerd.compareAndSet(false, true);
+					okToRegister.compareAndSet(false, true);
 					version.inc();
 				}
 			}
@@ -58,13 +58,35 @@ public class Participate_In_Course<R> extends Action<R> {
 		});
 		complete((R) new Object());
 	}
+	/**
+	 * SHOULD BE CALLED BEFORE START
+	 * 
+	 * 
+	 * @param studentName
+	 * sets the field studentName to a new String value
+	 */
 	public void NameToBeRegistered(String studentName) {
 		this.studentName = studentName;
 	}
+	/**
+	 * SHOULD BE CALLED BEFORE START
+	 * 
+	 * 
+	 * @param grade
+	 * sets the field grade to a new Integer value
+	 */
 	public void giveGrade(Integer grade) {
 		this.grade = grade;
 	}
+	/**
+	 * SHOULD BE CALLED BEFORE START
+	 * 
+	 * 
+	 * @return
+	 * returns the boolean value of the field okToRegister that 
+	 * indicates if the student has the option to register to the course 
+	 */
 	public boolean IsOkToRegister() {
-		return registerd.get();
+		return okToRegister.get();
 	}
 }

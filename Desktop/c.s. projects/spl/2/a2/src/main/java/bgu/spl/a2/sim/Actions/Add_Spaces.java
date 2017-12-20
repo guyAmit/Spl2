@@ -29,7 +29,13 @@ public class Add_Spaces<R> extends Action<R> {
 		});
 		complete((R) new Object());
 	}
-	
+	/*
+	 * SHOULD BE CALLED BEFORE START
+	 * 
+	 * 
+	 * @param newPlases
+	 * Sets the field newPlases to a new Integer value
+	 */
 	public void SetPlacesToAdd(Integer newPlases) {
 		this.newPlases = newPlases;
 	}

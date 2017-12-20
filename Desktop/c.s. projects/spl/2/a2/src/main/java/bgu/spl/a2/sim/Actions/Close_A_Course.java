@@ -19,16 +19,21 @@ public class Close_A_Course<R> extends Action<R> {
 		setActionName("Close A Course");
 		actions.add(new Action() {
 
+			private List<Action<?>> actions = new ArrayList<>();
+			
 			@Override
 			protected void start() {
 				// TODO Auto-generated method stub
+				courseState.setAvailableSpots(-1);
 				departmentState.getCourseList().remove(courseName);
 				for(String student : departmentState.getStudentList()) {
 					Unregister<R> unregister = new Unregister<R>();
 					unregister.NameToUnregister(student);
-					sendMessage(unregister,student,pool.getActors().get(student));
+					then(actions,()->{
+						//actorId -> course, actorState -> student
+						pool.submit(unregister, student , pool.getActors().get(student));
+					});
 				}
-				courseState.setAvailableSpots(-1);
 			}
 		});
 		then(actions,()->{
@@ -37,7 +42,12 @@ public class Close_A_Course<R> extends Action<R> {
 		});
 		complete((R) new Object());
 	}
-
+/*
+ * SHOULD BE CALLED BEFORE START
+ * 
+ * @param courseName
+ * sets the field courseName to a new String value
+ */
 	public void NameToDelete (String courseName){
 		this.courseName = courseName;
 	}

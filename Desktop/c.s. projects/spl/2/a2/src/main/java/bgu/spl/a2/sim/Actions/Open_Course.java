@@ -36,6 +36,13 @@ public class Open_Course<R> extends Action<R> {
 		});
 		complete((R) new Object());
 	}
+	/**
+	 * SHOULD BE CALLED BEFORE START
+	 * 
+	 * 
+	 * @param courseName
+	 * sets the field courseName to a new String value
+	 */
 	public void setNameToAddedCourse(String courseName) {
 		this.courseName = courseName;
 	}

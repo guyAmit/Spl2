@@ -18,9 +18,13 @@ public class Register_With_Preferences<R> extends Action<R> {
 		setActionName("Register With Preferences");
 
 		actions.add(new Action() {
+			
 			private String courseName;
+			private List<Action<?>> actions = new ArrayList<>();
+			
 			@Override
 			protected void start() {
+				setActionName("Sub Action of Register With Preferences");
 				// TODO Auto-generated method stub
 				//no need to check if grade at list 56
 				//for(String course : preferedCourses){
@@ -52,6 +56,13 @@ public class Register_With_Preferences<R> extends Action<R> {
 		});
 		complete((R) new Object());
 	}
+	/**
+	 * SHOULD BE CALLED BEFORE START
+	 * 
+	 * 
+	 * @param studentName
+	 * sets the field studentName to a new String value
+	 */
 	public void NameToBeRegistered(String studentName) {
 		this.studentName = studentName;
 	}
