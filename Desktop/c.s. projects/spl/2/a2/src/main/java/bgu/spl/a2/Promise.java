@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Promise<T>{
 	
 	private ArrayList<callback> callbacks;
-	private T resualt;
+	private T result;
 	private AtomicBoolean isResolved;
 	
 	public Promise() {
@@ -43,7 +43,7 @@ public class Promise<T>{
 	 */
 	public T get() {
 		if(this.isResolved()) {
-			return this.resualt;
+			return this.result;
 		}
 		else {
 			throw new IllegalStateException("promise is not resolved yet");
@@ -79,7 +79,7 @@ public class Promise<T>{
 			throw new IllegalStateException("promise is not resloved yet");//already resolved maby mistake?
 		else {
 			this.isResolved.compareAndSet(false, true);
-			this.resualt=value;
+			this.result=value;
 			synchronized (callbacks) {
 				for (callback callback : callbacks) {
 					callback.call();

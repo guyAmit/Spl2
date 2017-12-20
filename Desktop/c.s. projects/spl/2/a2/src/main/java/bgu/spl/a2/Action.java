@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class Action<R> {
 	
 	protected Promise<R> promise = new Promise<>();
-	protected R result = null;
+	//protected R result = null;
 	//protected List<Action<R>> actions;
 	protected String actionName = "";
 	protected ActorThreadPool pool = null;
@@ -111,7 +111,7 @@ public abstract class Action<R> {
     	while(!promise.isResolved()) {
     		continue;
     	}
-    	result = promise.get();
+    	//result = promise.get();
     	return promise;
     }
     /**

@@ -27,13 +27,6 @@ public class CoursePrivateState extends PrivateState{
 		prequisites = new ArrayList<>();
 	}
 	
-	public CoursePrivateState(Integer availableSpots, Integer registered
-			,List<String> regStudents,List <String> prequisites) {
-		this.availableSpots=availableSpots;
-		this.registered = registered;
-		this.regStudents = regStudents;
-		this.prequisites = prequisites;
-	}
 	public Integer getAvailableSpots() {
 		return availableSpots;
 	}
@@ -48,5 +41,17 @@ public class CoursePrivateState extends PrivateState{
 
 	public List<String> getPrequisites() {
 		return prequisites;
+	}
+	public void setAvailableSpots(Integer availableSpots) {
+		this.availableSpots=availableSpots;
+	}
+	public void setRegistered(Integer registered) {
+		this.registered = registered;
+	}
+	public void setRegStudents(List<String> regStudents) {
+		this.regStudents = regStudents;
+	}
+	public void setPrequisites(List<String> prequisites) {
+		this.prequisites = prequisites;
 	}
 }

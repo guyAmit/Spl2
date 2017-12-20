@@ -21,10 +21,7 @@ public class StudentPrivateState extends PrivateState{
 		grades = new HashMap<>();
 		signature = 0;
 	}
-	public StudentPrivateState(HashMap<String,Integer> grades,long signature) {
-		this.grades = grades;
-		this.signature = signature;
-	}
+	
 	public HashMap<String, Integer> getGrades() {
 		return grades;
 	}
@@ -32,7 +29,9 @@ public class StudentPrivateState extends PrivateState{
 	public long getSignature() {
 		return signature;
 	}
-	
+	public void setGrades(HashMap<String,Integer> grades) {
+		this.grades = grades;
+	}
 	public void setSignature(long signature) {
 		this.signature = signature;
 	}
