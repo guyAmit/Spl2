@@ -26,7 +26,7 @@ public class Close_A_Course<R> extends Action<R> {
 				for(String student : departmentState.getStudentList()) {
 					Unregister<R> unregister = new Unregister<R>();
 					unregister.NameToUnregister(student);
-					pool.submit(unregister,student,pool.getActors().get(student));
+					sendMessage(unregister,student,pool.getActors().get(student));
 				}
 				courseState.setAvailableSpots(-1);
 			}

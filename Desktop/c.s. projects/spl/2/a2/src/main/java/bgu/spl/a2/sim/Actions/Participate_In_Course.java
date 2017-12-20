@@ -16,13 +16,14 @@ import bgu.spl.a2.sim.privateStates.StudentPrivateState;
  * @param <R>
  *
  */
-public class Participating_In_Course<R> extends Action<R> {
+public class Participate_In_Course<R> extends Action<R> {
 	
 	private String studentName ="";
 	private Integer grade = new Integer(-1);
 	private CoursePrivateState courseState = (CoursePrivateState)pool.getActors().get(actorId);
 	private StudentPrivateState studentState = (StudentPrivateState) actorState;
 	private AtomicBoolean canRegister = new AtomicBoolean(true);
+	private AtomicBoolean registerd = new AtomicBoolean(false);
 	private List<Action<?>> actions = new ArrayList<Action<?>>();
 	
 	@SuppressWarnings("unchecked")
@@ -30,7 +31,7 @@ public class Participating_In_Course<R> extends Action<R> {
 	protected void start() {
 		// TODO Auto-generated method stub
 		setActionName("Add Student");
-		
+
 		actions.add(new Action() {
 			@Override
 			protected void start() {
@@ -41,11 +42,13 @@ public class Participating_In_Course<R> extends Action<R> {
 						canRegister.compareAndSet(true, false);
 						break;
 					}
-					if(canRegister.get()) {
-						courseState.getRegStudents().add(studentName);
-						courseState.setAvailableSpots(courseState.getAvailableSpots() - 1);
-						studentState.getGrades().put(actorId,grade);
-					}
+				}
+				if(canRegister.get()) {
+					courseState.getRegStudents().add(studentName);
+					courseState.setAvailableSpots(courseState.getAvailableSpots() - 1);
+					studentState.getGrades().put(actorId,grade);
+					registerd.compareAndSet(false, true);
+					version.inc();
 				}
 			}
 		});
@@ -60,5 +63,8 @@ public class Participating_In_Course<R> extends Action<R> {
 	}
 	public void giveGrade(Integer grade) {
 		this.grade = grade;
+	}
+	public boolean IsOkToRegister() {
+		return registerd.get();
 	}
 }

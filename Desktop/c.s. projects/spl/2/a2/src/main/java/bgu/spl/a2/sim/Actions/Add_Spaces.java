@@ -5,7 +5,7 @@ import java.util.List;
 import bgu.spl.a2.Action;
 import bgu.spl.a2.sim.privateStates.CoursePrivateState;
 
-public class Opening_New_places_In_a_Course<R> extends Action<R> {
+public class Add_Spaces<R> extends Action<R> {
 
 	private CoursePrivateState courseState = (CoursePrivateState)actorState;
 	private List <Action<?>> actions = new ArrayList<>();

@@ -16,6 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public abstract class Action<R> {
 	
+	protected VersionMonitor version = new VersionMonitor();
 	protected Promise<R> promise = new Promise<>();
 	//protected R result = null;
 	//protected List<Action<R>> actions;
