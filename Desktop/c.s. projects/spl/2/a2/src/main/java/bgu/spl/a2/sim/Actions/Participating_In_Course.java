@@ -18,6 +18,7 @@ import bgu.spl.a2.sim.privateStates.StudentPrivateState;
  */
 public class Participating_In_Course<R> extends Action<R> {
 	
+	private String studentName ="";
 	private Integer grade = new Integer(-1);
 	private CoursePrivateState courseState = (CoursePrivateState)pool.getActors().get(actorId);
 	private StudentPrivateState studentState = (StudentPrivateState) actorState;
@@ -41,7 +42,7 @@ public class Participating_In_Course<R> extends Action<R> {
 						break;
 					}
 					if(canRegister.get()) {
-						courseState.getRegStudents().add(actorId);
+						courseState.getRegStudents().add(studentName);
 						courseState.setAvailableSpots(courseState.getAvailableSpots() - 1);
 						studentState.getGrades().put(actorId,grade);
 					}
@@ -49,12 +50,14 @@ public class Participating_In_Course<R> extends Action<R> {
 			}
 		});
 		then(actions,()->{
-			//actorId -> course actorState -> student
-			pool.submit(this, actorId, pool.getPrivaetState(actorId));
+			//actorId -> course, actorState -> student
+			pool.submit(this, actorId, courseState);
 		});
 		complete((R) new Object());
 	}
-	
+	public void NameToBeRegistered(String studentName) {
+		this.studentName = studentName;
+	}
 	public void giveGrade(Integer grade) {
 		this.grade = grade;
 	}

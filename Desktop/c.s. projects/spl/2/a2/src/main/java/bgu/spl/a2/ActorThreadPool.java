@@ -89,24 +89,27 @@ public class ActorThreadPool {
 	/**
 	 * submits an action into an actor to be executed by a thread belongs to
 	 * this thread pool
-	 *
+	 * if two threads enter to the first if records can get messed up so it has to be synchronized
 	 * @param action
 	 *            the action to execute
 	 * @param actorId
 	 *            corresponding actor's id
 	 * @param actorState
 	 *            actor's private state (actor's information)
+	 *   
 	 */
 	public void submit(Action<?> action, String actorId, PrivateState actorState) {
 		if(this.actions.containsKey(actorId)) {
+			synchronized(this){
 			this.actions.get(actorId).add(action);
 			this.actors.get(actorId).addRecord(action.getActionName());
+			}
 		}
 		else {
 			OneAccessQueue<Action> newQueue = new OneAccessQueue<Action>();
 			newQueue.enqueue(action);
-			this.actions.put(actorId, newQueue);
-			this.actors.put(actorId, actorState);
+			this.actions.putIfAbsent(actorId, newQueue);
+			this.actors.putIfAbsent(actorId, actorState);
 		}
 	}
 		

@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import bgu.spl.a2.Action;
 import bgu.spl.a2.ActorThreadPool;
 import bgu.spl.a2.PrivateState;
-import bgu.spl.a2.sim.Actions.Open_A_New_Course;
+import bgu.spl.a2.sim.Actions.Open_Course;
 
 import org.json.simple.*;
 import org.json.simple.parser.JSONParser;
@@ -102,9 +102,9 @@ public class Simulator {
 	 * @return array list of actions
 	 */
 	@SuppressWarnings("unchecked")
-	public static ArrayList<Open_A_New_Course<Boolean>> initPhase1Actions(JSONObject obj) {
+	public static ArrayList<Open_Course<Boolean>> initPhase1Actions(JSONObject obj) {
 		JSONArray Phase1ActionsArray = (JSONArray)obj.get("Phase 1");
-		ArrayList<Open_A_New_Course<Boolean>> actions= new ArrayList<>();
+		ArrayList<Open_Course<Boolean>> actions= new ArrayList<>();
 		Phase1ActionsArray.forEach(entry -> {
 			String Department = ((JSONObject)entry).get("Department").toString();
 			String Course = ((JSONObject)entry).get("Course").toString();
@@ -112,7 +112,7 @@ public class Simulator {
 			JSONArray PrerequisitesJson = (JSONArray)(((JSONObject)entry)).get("Prerequisites");
 			ArrayList<String> Prerequisites  = new ArrayList<>();
 			PrerequisitesJson.forEach(pre ->{Prerequisites.add((String)pre);});
-			Open_A_New_Course open;
+			Open_Course open;
 			//actions.add(open);
 		});
 		return actions;

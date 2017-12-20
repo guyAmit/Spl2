@@ -9,10 +9,9 @@ import bgu.spl.a2.sim.privateStates.CoursePrivateState;
 import bgu.spl.a2.sim.privateStates.StudentPrivateState;
 
 public class Unregister<R> extends Action<R> {
-	private Integer grade = new Integer(-1);
 	private CoursePrivateState courseState = (CoursePrivateState)pool.getActors().get(actorId);
 	private StudentPrivateState studentState = (StudentPrivateState) actorState;
-	private AtomicBoolean canRegister = new AtomicBoolean(true);
+	private String nameOfStudent = "";
 	private List<Action<?>> actions = new ArrayList<Action<?>>();
 	
 	@SuppressWarnings("unchecked")
@@ -26,25 +25,21 @@ public class Unregister<R> extends Action<R> {
 			protected void start() {
 				// TODO Auto-generated method stub
 				//no need to check if grade at list 56
-				for(String course : courseState.getPrequisites()){
-					if(!studentState.getGrades().containsKey(course)) {
-						canRegister.compareAndSet(true, false);
-						break;
+
+					if(courseState.getRegStudents().remove(nameOfStudent)) {
+						studentState.getGrades().remove(actorId);
+						courseState.setAvailableSpots(courseState.getAvailableSpots() + 1);
 					}
-					if(canRegister.get()) {
-						courseState.getRegStudents().add(actorId);
-						courseState.setAvailableSpots(courseState.getAvailableSpots() - 1);
-						studentState.getGrades().put(actorId,grade);
-					}
-				}
 			}
 		});
 		then(actions,()->{
-			//actorId -> course actorState -> student
-			pool.submit(this, actorId, pool.getPrivaetState(actorId));
+			//actorId -> course, actorState -> student
+			pool.submit(this, actorId, courseState);
 		});
 		complete((R) new Object());
 	}
+	public void NameToUnregister(String nameOfStudent) {
+		this.nameOfStudent = nameOfStudent;
+	}
 	
-
 }
