@@ -69,13 +69,20 @@ public class Participate_In_Course extends Action<Boolean> {
 					((CoursePrivateState)this.actorState).register(this.studendId);
 				}
 				else {System.out.println("registration failed");}
+		    	actionInPhase.decrementAndGet();
 			});
 			
 		}else {
 			this.complete(false);
+	    	actionInPhase.decrementAndGet();
 			System.out.println("no spots available");
 		}
 		
+	}
+	
+	@Override
+	public String toString() {
+		return "Participate in course, <student: "+this.studendId+", course"+this.actorId+">";
 	}
 
 }

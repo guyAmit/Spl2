@@ -16,6 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public abstract class Action<R> {
 	
+	public static AtomicInteger actionInPhase;
 	protected Promise<R> promise = new Promise<>();
 	protected R result = null;
 	protected String actionName = "";

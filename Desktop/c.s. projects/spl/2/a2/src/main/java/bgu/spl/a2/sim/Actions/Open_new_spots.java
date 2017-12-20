@@ -39,5 +39,11 @@ public class Open_new_spots extends Action<Object> {
 			else {System.out.println("course is closed");}
 			}
 		else {System.out.println("course does not exists");}
+    	actionInPhase.decrementAndGet();
+	}
+	
+	@Override
+	public String toString() {
+		return "Open new spots, course: "+this.actorId;
 	}
 }

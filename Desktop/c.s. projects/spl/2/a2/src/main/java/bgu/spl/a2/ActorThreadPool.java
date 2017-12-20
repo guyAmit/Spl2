@@ -23,7 +23,6 @@ public class ActorThreadPool {
 	private AtomicBoolean isShutDown;
 	private Map<String,PrivateState> actors; //<actorID,private state>
 	private Map<String,OneAccessQueue<Action<?>>> actions; // <actorID,actionQueue>
-	private VersionMonitor version;
 	/**
 	 * creates a {@link ActorThreadPool} which has nthreads. Note, threads
 	 * should not get started until calling to the {@link #start()} method.
@@ -42,25 +41,19 @@ public class ActorThreadPool {
 		this.actions = new ConcurrentHashMap<String,OneAccessQueue<Action<?>>>();
 		this.threads = new ArrayList<Thread>();
 		this.isShutDown = new AtomicBoolean(true);
-		this.version = new VersionMonitor();
 		for(int i =0; i<nthreads; i++) {
 			this.threads.add(new Thread(()->{
 
 				while(this.isShutDown.get()) { //should be true until changed by the shutdown method
 					for (Map.Entry<String, OneAccessQueue<Action<?>>> entry : actions.entrySet()) {
 						if(entry.getValue().tryToLockDequeue()) {
-							Action action = entry.getValue().dequeue();
-							if(action==null) continue;
-							String actorId = entry.getKey();
-							action.handle(this, actorId, this.getPrivaetState(actorId));
-							this.version.inc();
+							if(entry.getValue().size()>0) {
+								Action action = entry.getValue().dequeue();
+								if(action==null) continue;
+								String actorId = entry.getKey();
+								action.handle(this, actorId, this.getPrivaetState(actorId));
+							}
 						}
-					}
-					try {
-						version.await(version.getVersion());
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
 					}
 				}
 				
@@ -100,23 +93,31 @@ public class ActorThreadPool {
 	 * 		a new department private state because there are no other options.
 	 */
 	public void submit(Action<?> action, String actorId, PrivateState actorState) {
-		OneAccessQueue<Action<?>> actor = this.actions.get(actorId);
-		if(actor!=null & actorState!=null) {
+		OneAccessQueue<Action<?>> actionQueue = this.actions.get(actorId);
+		if(actionQueue!=null & actorState!=null) {
 			Boolean lock=false;
 			do{
-				lock=actor.tryToLockEnqueue();
+				lock=actionQueue.tryToLockEnqueue();
 			}while(!lock);
-			actor.enqueue(action);			
-			this.actors.put(actorId, actorState);
+			actionQueue.enqueue(action);			
 		}
-		else {
-			OneAccessQueue<Action<?>> newQueue = new OneAccessQueue<Action<?>>();
+		else if(actionQueue==null && actorState!=null){ //creating a new course/student actor 
+			actionQueue = new OneAccessQueue<>();
 			if(action!=null) {
-				newQueue.tryToLockEnqueue();
-				newQueue.enqueue(action);
+				actionQueue.tryToLockEnqueue();
+				actionQueue.enqueue(action);
+			}
+			this.actions.put(actorId, actionQueue);
+			this.actors.put(actorId,actorState);
+		}
+		else { //creating a new department, and putting the action into it
+			actionQueue = new OneAccessQueue<Action<?>>();
+			if(action!=null) {
+				actionQueue.tryToLockEnqueue();
+				actionQueue.enqueue(action);
 			}
 			DepartmentPrivateState depratmentPrivateState = new DepartmentPrivateState();
-			this.actions.put(actorId, newQueue);
+			this.actions.put(actorId, actionQueue);
 			this.actors.put(actorId, depratmentPrivateState);
 		}
 	}

@@ -95,4 +95,10 @@ public class CoursePrivateState extends PrivateState{
 		this.availableSpots++;
 		this.registered--;
 	}
+	
+	@Override
+	public String toString() {
+		return "course private state:\n"+"registerd students:"+this.regStudents+"\n avilable spots: "
+				+this.availableSpots;
+	}
 }

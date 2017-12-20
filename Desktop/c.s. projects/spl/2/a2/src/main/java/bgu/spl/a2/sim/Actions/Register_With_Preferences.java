@@ -66,5 +66,10 @@ public class Register_With_Preferences extends Action<Boolean> {
 			System.out.println("regestration with prefernces failed");
 		}
 	}
+	
+	@Override
+	public String toString() {
+		return "Register with preference, student: "+this.actorId;
+	}
 
 }

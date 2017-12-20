@@ -33,4 +33,9 @@ public class DepartmentPrivateState extends PrivateState{
 		return studentList;
 	}
 	
+	@Override
+	public String toString() {
+		return "department private state:\n"+"students:"+this.studentList+"\n"
+				+"courses: "+this.courseList;
+	}
 }

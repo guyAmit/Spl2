@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import bgu.spl.a2.Action;
 import bgu.spl.a2.ActorThreadPool;
@@ -112,6 +113,7 @@ public class Simulator {
 	@SuppressWarnings("unchecked")
 	public static void initPhase1Actions(JSONObject obj) {
 		JSONArray Phase1ActionsArray = (JSONArray)obj.get("Phase 1");
+		Action.actionInPhase=new AtomicInteger(Phase1ActionsArray.size());
 		Phase1ActionsArray.forEach(entry -> {
 			String type = ((JSONObject)entry).get("Action").toString();
 			if(type.compareTo("Add Student")==0) {//#done
@@ -150,9 +152,9 @@ public class Simulator {
 	 */
 	@SuppressWarnings("unchecked")
 	public static void initPhase2Actions(JSONObject obj) {
-		JSONArray Phase1ActionsArray = (JSONArray)obj.get("Phase 2");
+		JSONArray Phase2ActionsArray = (JSONArray)obj.get("Phase 2");
 		ArrayList<Action<?>> actions= new ArrayList<>();
-		Phase1ActionsArray.forEach(entry -> {
+		Phase2ActionsArray.forEach(entry -> {
 			String type = ((JSONObject)entry).get("Action").toString();
 			if(type.compareTo("Add Student")==0) {//#done
 				ActionsCreator.createAddStudentAction((JSONObject)entry, actorThreadPool);
@@ -193,16 +195,18 @@ public class Simulator {
 			attachActorThreadPool(initThreadPool((JSONObject)jObj));
 			computers = initComputers((JSONObject)jObj);
 			initPhase1Actions((JSONObject)jObj); //phase1 parsing is working
-			initPhase2Actions((JSONObject)jObj); 
-			
-			//start();
+			start();
+			actorThreadPool.shutdown();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }catch(ParseException e) {
         	e.printStackTrace();
-        }
+        } catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		
 	}

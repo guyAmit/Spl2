@@ -67,4 +67,9 @@ public class Unregister extends Action<Boolean> {
 	}
 
 	}
+	
+	@Override
+	public String toString() {
+		return "Unregister, <student: "+this.studentId+", course"+this.actorId+">";
+	}
 }

@@ -44,4 +44,10 @@ public class StudentPrivateState extends PrivateState{
 					return false;		}
 		return true;
 	}
+	
+	@Override
+	public String toString() {
+		return "student private state:\n"+"grades table"+this.getGrades()+"\n"+
+				"signature:"+this.signature;
+	}
 }

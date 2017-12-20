@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bgu.spl.a2.Action;
+import bgu.spl.a2.OneAccessQueue;
 import bgu.spl.a2.PrivateState;
 import bgu.spl.a2.sim.Actions.subActions.ConformationAction;
 import bgu.spl.a2.sim.privateStates.DepartmentPrivateState;
@@ -53,9 +54,14 @@ public class Add_Student extends Action<Boolean> {
 				((DepartmentPrivateState)this.actorState).getStudentList().add(this.studentId);
 			}else {System.out.println("student was not created");}
 			this.complete(resualt);
+	    	actionInPhase.decrementAndGet();
 		});
 	}
 	
+	@Override
+	public String toString() {
+		return "Add student: "+this.studentId;
+	}
 	
 	
 	

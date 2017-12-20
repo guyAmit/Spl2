@@ -55,6 +55,7 @@ public class Close__Course extends Action<Boolean> {
 					this.complete(false);
 					System.out.println("course was not closed");
 					}
+		    	actionInPhase.decrementAndGet();
 			});
 		}
 		else {
@@ -62,6 +63,11 @@ public class Close__Course extends Action<Boolean> {
 			System.out.println("course is not in the department");
 		}
 		
+	}
+	
+	@Override
+	public String toString() {
+		return "Close Course: "+this.courseId;
 	}
 
 }

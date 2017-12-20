@@ -59,6 +59,12 @@ public class Open_A_New_Course extends Action<Boolean> {
 			if(resualt) {
 				((DepartmentPrivateState)this.actorState).getCourseList().add(courseId);
 			}else {System.out.println("student was not created");}
+	    	actionInPhase.decrementAndGet();
 		});
+	}
+	
+	@Override
+	public String toString() {
+		return "Open new course: "+this.courseId;
 	}
 }
