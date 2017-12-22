@@ -107,7 +107,6 @@ public class ActorThreadPool {
 	 * 		a new department private state because there are no other options.
 	 */
 	public void submit(Action<?> action, String actorId, PrivateState actorState) {
-<<<<<<< HEAD
 		OneAccessQueue<Action<?>> actionQueue = this.actions.get(actorId);
 		if(actionQueue!=null & actorState!=null) {
 			Boolean lock=false;
@@ -124,11 +123,9 @@ public class ActorThreadPool {
 			}
 			this.actions.put(actorId, actionQueue);
 			this.actors.put(actorId,actorState);
-=======
 		if(this.actions.containsKey(actorId)) {
 			this.actions.get(actorId).add(action);
 			this.actors.get(actorId).addRecord(action.getActionName());
->>>>>>> 88f28c05f4085f53da17967c2778531d1addd2e2
 		}
 		else { //creating a new department, and putting the action into it
 			actionQueue = new OneAccessQueue<Action<?>>();
@@ -140,6 +137,7 @@ public class ActorThreadPool {
 			this.actions.put(actorId, actionQueue);
 			this.actors.put(actorId, depratmentPrivateState);
 		}
+	}
 	}
 		
 
