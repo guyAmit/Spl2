@@ -1,0 +1,224 @@
+[33mcommit ddf3a552981aa801f269f431a9ca757be73847b9[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m
+Author: adamshindel <adamsh@post.bgu.ac.il>
+Date:   Tue Dec 12 18:17:50 2017 +0200
+
+    not using OneAccess and deleted try catch promise version
+
+[33mcommit b1d2271699a7a7d547c3aac05e060e015be4a670[m
+Author: adamshindel <adamsh@post.bgu.ac.il>
+Date:   Tue Dec 12 12:29:12 2017 +0200
+
+    fixed merge
+
+[33mcommit 353d5231753212ea09a2f5a8eba30a1d4bf5dd2e[m
+Merge: 3cba87a 9a237b6
+Author: guyAmit <guypguy1@gmail.com>
+Date:   Tue Dec 12 11:43:19 2017 +0200
+
+    trying to fix merge
+
+[33mcommit 3cba87a741ccd46a9fc17f549644e9de1d720d66[m
+Author: guyAmit <guypguy1@gmail.com>
+Date:   Tue Dec 12 11:42:17 2017 +0200
+
+    trying to fix merge
+
+[33mcommit 673f5eb4218cd0130bf7d2197d28ae373c1e6218[m
+Author: guyAmit <guypguy1@gmail.com>
+Date:   Tue Dec 12 11:40:07 2017 +0200
+
+    fixing merge
+
+[33mcommit 9a237b6311abda9e9cc75dfe37f92f5e0bb05455[m
+Author: guyAmit <guypguy1@gmail.com>
+Date:   Tue Dec 12 11:31:55 2017 +0200
+
+    stated implamenting simulator
+
+[33mcommit b5e14ef287f779f6599fc27319847c25f93af69d[m
+Author: adamshindel <adamsh@post.bgu.ac.il>
+Date:   Tue Dec 12 11:25:59 2017 +0200
+
+    fixed version+1
+
+[33mcommit ffcf8da5286f58bacb0a4c9e5d150724c45659c9[m
+Author: adamshindel <adamsh@post.bgu.ac.il>
+Date:   Tue Dec 12 11:18:35 2017 +0200
+
+    fixed only one thread is created
+
+[33mcommit 52aa510bbcfe1ca15f36bf2f906136d4d7027415[m
+Author: adamshindel <adamsh@post.bgu.ac.il>
+Date:   Tue Dec 12 10:48:01 2017 +0200
+
+    changes actor thread pool acordin to recent changes and deleted name of oneAccess
+
+[33mcommit 916984b7489698197720a38074c073c26ba3bbe2[m
+Author: adamshindel <adamsh@post.bgu.ac.il>
+Date:   Mon Dec 11 22:14:06 2017 +0200
+
+    how to add the friking student
+
+[33mcommit 32fda0f05250dee0a9d2d2835adbd1bd2551aec4[m
+Author: adamshindel <adamsh@post.bgu.ac.il>
+Date:   Mon Dec 11 20:56:19 2017 +0200
+
+    continued work on action
+
+[33mcommit 75e0331b65f7ac182fed9764516c009cc91d0262[m
+Author: adamshindel <adamsh@post.bgu.ac.il>
+Date:   Mon Dec 11 17:55:12 2017 +0200
+
+    implementation Action in progress
+
+[33mcommit 5677d4b849f30f05f78b92a925da2ff774b6b9c4[m
+Author: adamshindel <adamsh@post.bgu.ac.il>
+Date:   Mon Dec 11 16:49:12 2017 +0200
+
+    added changes
+
+[33mcommit 4b968c97f5b054a27aeea151b72be20556b51465[m
+Author: adamshindel <adamsh@post.bgu.ac.il>
+Date:   Mon Dec 11 16:01:55 2017 +0200
+
+    fixed jar junit path
+
+[33mcommit 85da28f3aeb9978a1b1b246451bcc418401d2ae7[m
+Author: adamshindel <adamsh@post.bgu.ac.il>
+Date:   Mon Dec 11 15:55:10 2017 +0200
+
+    implemented added methods in actorthreadpool
+
+[33mcommit 6b488bfcae49f623909324fb463dffc0b225d33f[m
+Author: adamshindel <adamsh@post.bgu.ac.il>
+Date:   Mon Dec 11 15:45:59 2017 +0200
+
+    added recent changes (no found 11.11)
+
+[33mcommit d40cbcb30f713fb071d2766c85a4b19c01f397e3[m
+Author: guyAmit <guypguy1@gmail.com>
+Date:   Thu Dec 7 22:53:09 2017 +0200
+
+    implamented promise
+
+[33mcommit 617d48ae44242497b60c11c7dbbc7168e940b0d0[m
+Author: guyAmit <guypguy1@gmail.com>
+Date:   Thu Dec 7 13:56:22 2017 +0200
+
+    added Classes diagram
+
+[33mcommit 1d8312458a48d6751d00e442420c1603957cb68d[m
+Author: guyAmit <guypguy1@gmail.com>
+Date:   Thu Dec 7 10:29:57 2017 +0200
+
+    implamented version monitor
+
+[33mcommit b03ae638d21e41bcad780ac3d97e1da87c7f85ca[m
+Author: guyAmit <guypguy1@gmail.com>
+Date:   Thu Dec 7 00:21:24 2017 +0200
+
+    updated threadpool, added a name field to oneaccessqueue
+
+[33mcommit 124f051f7e019c59d074908dac4d68fce297ba4e[m
+Author: guyAmit <guypguy1@gmail.com>
+Date:   Thu Dec 7 00:20:33 2017 +0200
+
+    updated threadpool, added a name field to oneaccessqueue
+
+[33mcommit a286c8aeb7839c99c7c0a71e0dd34c85bdc622b3[m
+Author: guyAmit <guypguy1@gmail.com>
+Date:   Wed Dec 6 22:01:18 2017 +0200
+
+    updated tests
+
+[33mcommit 05adf6fae833459c6cba714a8bb4b0a1026af966[m
+Merge: feb0bcb d56e3b7
+Author: guyAmit <guypguy1@gmail.com>
+Date:   Wed Dec 6 20:51:36 2017 +0200
+
+    Merge branch 'guy'
+    merged guy into master
+
+[33mcommit d56e3b7af3bbfcc1ca15f67189ca621e6cd36dea[m
+Author: guyAmit <guypguy1@gmail.com>
+Date:   Wed Dec 6 20:48:47 2017 +0200
+
+    changed threadpool implamation
+
+[33mcommit feb0bcbd561446a0485c18426c504f7248d2cdc1[m
+Author: adamshindel <adamsh@psot.bgu.ac.il>
+Date:   Wed Dec 6 20:42:40 2017 +0200
+
+    added actions
+
+[33mcommit 8327208e842735b73c822f3ed1547167c7cde123[m
+Author: adamshindel <adamsh@psot.bgu.ac.il>
+Date:   Wed Dec 6 18:52:47 2017 +0200
+
+    changed subscribe test
+
+[33mcommit 2c1dcfd2f2b45582f49ca17d396a6582a4319b32[m
+Author: guyAmit <guypguy1@gmail.com>
+Date:   Wed Dec 6 13:14:01 2017 +0200
+
+    changed the oneAccessQueue interface
+
+[33mcommit b79ec9446d62fa5627fe96914539db8dd312807d[m
+Author: adamshindel <adamsh@psot.bgu.ac.il>
+Date:   Wed Dec 6 11:08:23 2017 +0200
+
+    changed privateState Important comment
+
+[33mcommit 7739aaec1ce52d64cf94beae7d30b14570c3c560[m
+Author: adamshindel <adamsh@psot.bgu.ac.il>
+Date:   Wed Dec 6 10:48:30 2017 +0200
+
+    added new action code
+
+[33mcommit ac3a5f5f6be73ddeb5dcc6a5dff063bec9a62121[m
+Author: adamshindel <adamsh@psot.bgu.ac.il>
+Date:   Wed Dec 6 10:32:52 2017 +0200
+
+    maby fixed test
+
+[33mcommit 4a34826d73e060847cde4e409b3395a5112888eb[m
+Author: guyAmit <guypguy1@gmail.com>
+Date:   Wed Dec 6 01:51:19 2017 +0200
+
+    started implammenting actor pool,created a sync queue
+
+[33mcommit 1e96159ff98a4ced7ac86564aa8a6787941301de[m
+Author: adamshindel <adamsh@psot.bgu.ac.il>
+Date:   Tue Dec 5 22:12:14 2017 +0200
+
+    added constructors to extend private state
+
+[33mcommit 9238186d867f43912cf7393ad099ba8d2d76161b[m
+Author: adamshindel <adamsh@psot.bgu.ac.il>
+Date:   Tue Dec 5 20:37:28 2017 +0200
+
+    deleted strange directory
+
+[33mcommit d9d6f19e08cb9cd4140b4ee93827a297e3f3cc71[m
+Author: adamshindel <adamsh@psot.bgu.ac.il>
+Date:   Tue Dec 5 20:35:35 2017 +0200
+
+    merged
+
+[33mcommit 9f88825802ca087b3b7a10b9e17eb1d9683bf633[m
+Author: Guy-Amit <Guy-Amit@DESKTOP-G26FJV3>
+Date:   Tue Dec 5 00:53:02 2017 +0200
+
+    guy-first upload
+
+[33mcommit 3d56e9fee6b9c63998c29de04f8e79d1a96451c2[m
+Author: Guy Amit <guypguy1@gmail.com>
+Date:   Mon Dec 4 17:46:35 2017 +0200
+
+    first upload
+
+[33mcommit 428de4ca88708c166e744df71d8dd9159f405668[m
+Author: Guy Amit <guypguy1@gmail.com>
+Date:   Mon Dec 4 17:42:09 2017 +0200
+
+    first upload

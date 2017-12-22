@@ -41,6 +41,7 @@ public class Add_Student extends Action<Boolean> {
 	 */
 	@Override
 	protected void start() {
+<<<<<<< HEAD
 		ArrayList<Action<Boolean>> subActions = new ArrayList<>();
 		//sending a sub action to the student actor to check that he was indeed created
 		ConformationAction conf = new ConformationAction();
@@ -57,6 +58,11 @@ public class Add_Student extends Action<Boolean> {
 			this.complete(resualt);
 			Simulator.phaseActions.countDown();
 		});
+=======
+		this.setActionName("Add Student");
+		this.complete(this.result);
+	//(StudentPrivateState)actorState);	
+>>>>>>> 88f28c05f4085f53da17967c2778531d1addd2e2
 	}
 	
 	@Override
