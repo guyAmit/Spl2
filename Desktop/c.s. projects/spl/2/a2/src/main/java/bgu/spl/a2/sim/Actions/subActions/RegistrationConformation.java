@@ -28,14 +28,12 @@ public class RegistrationConformation extends Action<Boolean> {
 		this.courseId=courseId;
 		if(grade!=null) this.grade = grade;
 		else grade = new Integer(0);
-		this.coursePrivateState = (CoursePrivateState)this.pool.getPrivaetState(courseId);
 		this.actionName="Registration conformation";
 	}
 	
 	public RegistrationConformation(String courseId) {
 		this.courseId=courseId;
 		this.grade=new Integer(0);
-		this.coursePrivateState = (CoursePrivateState)this.pool.getPrivaetState(courseId);
 	}
 	
 	/**
@@ -46,6 +44,7 @@ public class RegistrationConformation extends Action<Boolean> {
 	 */
 	@Override
 	protected void start() {
+		this.coursePrivateState = (CoursePrivateState)this.pool.getPrivaetState(courseId);
 		if(((StudentPrivateState)this.actorState).meetRequirements(coursePrivateState.getPrequisites())) {
 			((StudentPrivateState)this.actorState).getGrades().put(courseId, grade);
 			this.complete(true);

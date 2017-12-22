@@ -23,6 +23,7 @@ public class ActorThreadPool {
 	private AtomicBoolean isShutDown;
 	private Map<String,PrivateState> actors; //<actorID,private state>
 	private Map<String,OneAccessQueue<Action<?>>> actions; // <actorID,actionQueue>
+	public static VersionMonitor monitor;
 	/**
 	 * creates a {@link ActorThreadPool} which has nthreads. Note, threads
 	 * should not get started until calling to the {@link #start()} method.
@@ -40,6 +41,7 @@ public class ActorThreadPool {
 		this.actors= new ConcurrentHashMap<String,PrivateState>();
 		this.actions = new ConcurrentHashMap<String,OneAccessQueue<Action<?>>>();
 		this.threads = new ArrayList<Thread>();
+		monitor = new VersionMonitor();
 		this.isShutDown = new AtomicBoolean(true);
 		for(int i =0; i<nthreads; i++) {
 			this.threads.add(new Thread(()->{
@@ -54,8 +56,16 @@ public class ActorThreadPool {
 									PrivateState actorPrivateState = this.getPrivaetState(actorId);
 									actorPrivateState.addRecord(action.getActionName());
 									action.handle(this, actorId, actorPrivateState);
+									monitor.inc();
+									entry.getValue().freeFrontLock(); // checking that the queue indeed get freed
 								}
 							}
+						}
+						try {
+							monitor.await(monitor.getVersion());
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
 
 				}

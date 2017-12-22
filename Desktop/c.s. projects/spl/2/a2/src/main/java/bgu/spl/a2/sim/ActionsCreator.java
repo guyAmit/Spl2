@@ -4,6 +4,7 @@ import bgu.spl.a2.Action;
 import bgu.spl.a2.ActorThreadPool;
 import bgu.spl.a2.PrivateState;
 import bgu.spl.a2.sim.Actions.Add_Student;
+import bgu.spl.a2.sim.Actions.Check_Administrative_Obligations;
 import bgu.spl.a2.sim.Actions.Close__Course;
 import bgu.spl.a2.sim.Actions.Open_A_New_Course;
 import bgu.spl.a2.sim.Actions.Open_new_spots;
@@ -102,5 +103,20 @@ public class ActionsCreator {
 		Integer spaces = (Integer)jsonEntry.get("Number");
 		Open_new_spots openNewSpotsAction = new Open_new_spots(courseId, spaces);
 		actorThreadPool.submit(openNewSpotsAction, courseId, coursePrivateState);
+	}
+	
+	
+	public static void createCheckAdministrativeObligations(JSONObject jsonEntry, ActorThreadPool actorThreadPool) {
+		String departmentId=jsonEntry.get("Department").toString();
+		JSONArray studentsJson = (JSONArray)(jsonEntry).get("Students");
+		ArrayList<String> studentsIds  = new ArrayList<>();
+		studentsJson.forEach(course ->{studentsIds.add((String)course);});
+		String computerId=jsonEntry.get("Computer").toString();
+		JSONArray coursesJson = (JSONArray)(jsonEntry).get("Conditions");
+		ArrayList<String> coursesIds  = new ArrayList<>();
+		coursesJson.forEach(course ->{coursesIds.add((String)course);});
+		Check_Administrative_Obligations checkAdministrativeObligationsAction = new Check_Administrative_Obligations(coursesIds, studentsIds, computerId);
+		DepartmentPrivateState departmentPrivateState = (DepartmentPrivateState)actorThreadPool.getPrivaetState(departmentId);
+		actorThreadPool.submit(checkAdministrativeObligationsAction, departmentId, departmentPrivateState);
 	}
 }

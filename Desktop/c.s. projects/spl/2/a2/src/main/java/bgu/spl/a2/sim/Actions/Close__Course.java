@@ -22,9 +22,9 @@ public class Close__Course extends Action<Boolean> {
 	*/
 	private String courseId;
 	private CoursePrivateState coursePrivateState;
+	
 	public Close__Course(String courseId) {
 		this.courseId=courseId;
-		this.coursePrivateState = (CoursePrivateState)this.pool.getActors().get(this.courseId);
 		this.actionName="Close Course";
 	}
 	
@@ -38,6 +38,7 @@ public class Close__Course extends Action<Boolean> {
 	 */
 	@Override
 	protected void start() {
+		this.coursePrivateState = (CoursePrivateState)this.pool.getActors().get(this.courseId);
 		if(((DepartmentPrivateState)this.actorState).getCourseList().contains(this.courseId)) {
 			ArrayList<Action<Boolean>> subActions = new ArrayList<>();
 			//sending a sub action to the course actor- telling him to remove all student from the course

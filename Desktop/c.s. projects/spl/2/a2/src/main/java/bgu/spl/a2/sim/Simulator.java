@@ -35,16 +35,52 @@ import org.json.simple.parser.ParseException;
  */
 public class Simulator {
 
-	
+	//phases names
+	private static final String Phase1="Phase 1";
+	private static final String Phase2="Phase 2";
+	private static final String Phase3="Phase 3";
+
+
 	public static ActorThreadPool actorThreadPool;
 	public static Warehouse wareHouse;
 	public static CountDownLatch phaseActions;
-	
+	public static Thread simulator;
+	public static Object jObj;
 	/**
 	* Begin the simulation Should not be called before attachActorThreadPool()
 	*/
     public static void start(){
-		actorThreadPool.start();
+		simulator = new Thread(()->{
+			try {
+				initPhaseActions((JSONObject)jObj,Phase1); //phase is working!!!
+				actorThreadPool.start();
+				System.out.println("<<<phase 1 started>>>");
+				phaseActions.await();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				initPhaseActions((JSONObject)jObj,Phase2);
+				System.out.println("<<<phase 2 started>>>");
+				ActorThreadPool.monitor.inc(); //waking up the suspended threads in the actor thread pool
+				phaseActions.await();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				initPhaseActions((JSONObject)jObj,Phase3);
+				System.out.println("<<<phase 3 started>>>");
+				ActorThreadPool.monitor.inc(); //waking up the suspended threads in the actor thread pool
+				phaseActions.await();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+	});
+		simulator.start();
     }
 	
 	/**
@@ -128,10 +164,10 @@ public class Simulator {
 	 * @return array list of actions
 	 */
 	@SuppressWarnings("unchecked")
-	public static void initPhase1Actions(JSONObject obj) {
-		JSONArray Phase1ActionsArray = (JSONArray)obj.get("Phase 1");
-		phaseActions = new CountDownLatch(Phase1ActionsArray.size());
-		Phase1ActionsArray.forEach(entry -> {
+	public static void initPhaseActions(JSONObject obj,String phase) {
+		JSONArray PhaseActionsArray = (JSONArray)obj.get(phase);
+		phaseActions = new CountDownLatch(PhaseActionsArray.size());
+		PhaseActionsArray.forEach(entry -> {
 			String type = ((JSONObject)entry).get("Action").toString();
 			if(type.compareTo("Add Student")==0) {//#done
 				ActionsCreator.createAddStudentAction((JSONObject)entry, actorThreadPool);
@@ -154,67 +190,22 @@ public class Simulator {
 			else if(type.compareTo("Close Course")==0) {//#done
 				ActionsCreator.createCloseCourseAction((JSONObject)entry, actorThreadPool);
 			}
-			else if(type.compareTo("Administrative Check")==0) {
+			else if(type.compareTo("Administrative Check")==0) {//#done
 				ActionsCreator.createAddStudentAction((JSONObject)entry, actorThreadPool);
 			}
 		});
 	}
 	
-	
-	/**
-	 * <h1>initPhase2Actions</h1>
-	 * read from the json file all the Phase2 actions and return<br>
-	 * an array list of all of those actions
-	 * @param JSONArray
-	 */
-	@SuppressWarnings("unchecked")
-	public static void initPhase2Actions(JSONObject obj) {
-		JSONArray Phase2ActionsArray = (JSONArray)obj.get("Phase 2");
-		phaseActions = new CountDownLatch(Phase2ActionsArray.size());
-		Phase2ActionsArray.forEach(entry -> {
-			String type = ((JSONObject)entry).get("Action").toString();
-			if(type.compareTo("Add Student")==0) {//#done
-				ActionsCreator.createAddStudentAction((JSONObject)entry, actorThreadPool);
-			}
-			if(type.compareTo("Open Course")==0) {//#done
-				ActionsCreator.createOpenCourseAction((JSONObject)entry, actorThreadPool);
-			}
-			else if(type.compareTo("Participate In Course")==0) {//#done
-				ActionsCreator.createParticipateInCourseAction((JSONObject)entry, actorThreadPool);
-			}
-			else if(type.compareTo("Add Spaces")==0) {//#done
-				ActionsCreator.createAddSpacesAction((JSONObject)entry, actorThreadPool);
-			}
-			else if(type.compareTo("Register With Preferences")==0) {//#done
-				ActionsCreator.createRegisterWithPreferncesAction((JSONObject)entry, actorThreadPool);
-			}
-			else if(type.compareTo("Unregister")==0) {//#done
-				ActionsCreator.createUnregisterAction((JSONObject)entry, actorThreadPool);
-			}
-			else if(type.compareTo("Close Course")==0) {//#done
-				ActionsCreator.createCloseCourseAction((JSONObject)entry, actorThreadPool);
-			}
-			else if(type.compareTo("Administrative Check")==0) {
-				ActionsCreator.createAddStudentAction((JSONObject)entry, actorThreadPool);
-			}
 		
-		});
-		
-	}
-	
-	
 	public static  void main(String [] args) {
 		//TODO: replace method body with real implementation
 		ArrayList<Computer> computers;
-		//TODO: create the ware house
 		JSONParser parser = new JSONParser();
-		Object jObj= new Object();
 		try(FileReader reader = new FileReader(args[0])){
 			jObj = parser.parse(reader);
 			computers = initComputers((JSONObject)jObj);
 			attachActorThreadPool(initThreadPool((JSONObject)jObj));
-			initPhase1Actions((JSONObject)jObj); //phase1 parsing is working
-			start();
+			wareHouse = new Warehouse(computers);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -222,28 +213,6 @@ public class Simulator {
         }catch(ParseException e) {
         	e.printStackTrace();
         }
-//		Thread simulator = new Thread(()->{
-//			try {
-//				phaseActions.await();
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			finally {
-//				try {
-//					phaseActions.await();
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			}
-//	});
-//	simulator.start();
-//	try {
-//		simulator.join();
-//	} catch (InterruptedException e) {
-//		// TODO Auto-generated catch block
-//		e.printStackTrace();
-//	}
+		start();
 	}
 }

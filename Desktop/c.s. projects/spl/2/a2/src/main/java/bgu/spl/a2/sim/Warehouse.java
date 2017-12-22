@@ -21,6 +21,7 @@ public class Warehouse {
 	 * @param array list of computers
 	 */
 	public Warehouse(ArrayList<Computer> computers) {
+		this.computers = new ConcurrentHashMap<>();
 		for (Computer computer : computers) {
 			SuspendingMutex mutex = new SuspendingMutex(computer);
 			this.computers.put(computer.getComputerType(), mutex);

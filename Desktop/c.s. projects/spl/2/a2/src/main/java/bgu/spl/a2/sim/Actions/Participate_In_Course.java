@@ -31,14 +31,13 @@ public class Participate_In_Course extends Action<Boolean> {
 	public Participate_In_Course(String studentId,int grade) {
 		this.studendId=studentId;
 		this.grade = new Integer(grade);
-		this.studentPrivateState = (StudentPrivateState)this.pool.getPrivaetState(studentId);
 		this.actionName="Particapate in course";
 	}
 	
 	public Participate_In_Course(String studentId) {
 		this.studendId=studentId;
-		this.studentPrivateState = (StudentPrivateState)this.pool.getPrivaetState(studentId);
 		this.grade= new Integer(0);
+		this.actionName="Particapate in course";
 	}
 	
 	/**
@@ -53,6 +52,7 @@ public class Participate_In_Course extends Action<Boolean> {
 	@Override
 	protected void start() {
 		// TODO Auto-generated method stub
+		this.studentPrivateState = (StudentPrivateState)this.pool.getPrivaetState(this.studendId);
 		if(((CoursePrivateState)this.actorState).getAvailableSpots()>0) {
 			ArrayList<Action<Boolean>> subActions = new ArrayList<>();
 			RegistrationConformation conf;
@@ -84,7 +84,7 @@ public class Participate_In_Course extends Action<Boolean> {
 	
 	@Override
 	public String toString() {
-		return "Participate in course, <student: "+this.studendId+", course"+this.actorId+">";
+		return this.studendId+": Participate in course";
 	}
 
 }

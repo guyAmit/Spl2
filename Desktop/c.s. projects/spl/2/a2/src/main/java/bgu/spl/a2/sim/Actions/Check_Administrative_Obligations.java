@@ -29,7 +29,6 @@ public class Check_Administrative_Obligations extends Action<Boolean> {
 		this.computerId=computerId;
 		this.studentsIds=studentsIds;
 		this.coursesIds=coursesToCheck;
-		studentsIds.forEach(student -> this.studentsPrivateStates.add((StudentPrivateState)this.pool.getPrivaetState(student)));
 	}
 	
 	
@@ -41,11 +40,15 @@ public class Check_Administrative_Obligations extends Action<Boolean> {
 	 */
 	@Override
 	protected void start() {
+		this.studentsIds.forEach(student -> this.studentsPrivateStates.add((StudentPrivateState)this.pool.getPrivaetState(student)));
 		Promise<Computer> computerPromise = Simulator.wareHouse.acquireComputer(computerId);
+		
+		//waiting to the action turn for the computer, and then doing the check and signs
 		computerPromise.subscribe(()->{
 			for (StudentPrivateState student : this.studentsPrivateStates) {
 				student.setSignature(computerPromise.get().checkAndSign(coursesIds, student.getGrades()));
 			}
+			//freeing the computer.
 			Simulator.wareHouse.freeComputer(this.computerId);
 			Simulator.phaseActions.countDown();
 			this.complete(true);

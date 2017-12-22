@@ -28,7 +28,6 @@ public class UnRegistrationConformation extends Action<Boolean> {
 	public UnRegistrationConformation(String courseId) {
 		this.courseId=courseId;
 		this.grade=new Integer(0);
-		this.coursePrivateState = (CoursePrivateState)this.pool.getPrivaetState(courseId);
 		this.actionName="UnRegistrationConformation";
 
 	}
@@ -41,6 +40,7 @@ public class UnRegistrationConformation extends Action<Boolean> {
 	 */
 	@Override
 	protected void start() {
+		this.coursePrivateState = (CoursePrivateState)this.pool.getPrivaetState(courseId);
 		if(((StudentPrivateState)this.actorState).getGrades().containsKey(courseId)){
 			((StudentPrivateState)this.actorState).getGrades().remove(this.courseId);
 			this.complete(true);

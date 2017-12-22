@@ -24,7 +24,6 @@ public class Unregister extends Action<Boolean> {
 	
 	public Unregister(String StudentId) {
 		this.studentId=studentId;
-		this.studentPrivateState = (StudentPrivateState)this.pool.getActors().get(StudentId);
 		this.actionName="Unregister";
 	}
 	
@@ -41,6 +40,7 @@ public class Unregister extends Action<Boolean> {
 	 */
 	@Override
 	protected void start() {
+		this.studentPrivateState = (StudentPrivateState)this.pool.getActors().get(this.studentId);
 		if(((CoursePrivateState)this.actorState).getRegStudents().contains(studentId)) {
 			if(((CoursePrivateState)this.actorState).getAvailableSpots()>0) {
 				ArrayList<Action<Boolean>> subActions = new ArrayList<>();

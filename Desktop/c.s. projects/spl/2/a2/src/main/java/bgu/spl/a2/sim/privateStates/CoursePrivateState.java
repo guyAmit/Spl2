@@ -78,7 +78,7 @@ public class CoursePrivateState extends PrivateState{
 	 * of the course when a student is trying to register
 	 * @param studentId
 	 */
-	public void register(String studentId) {
+	synchronized public void register(String studentId) {
 		this.regStudents.add(studentId);
 		this.registered++;
 		this.availableSpots--;
