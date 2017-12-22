@@ -205,7 +205,7 @@ public class Simulator {
 	
 	public static  void main(String [] args) {
 		//TODO: replace method body with real implementation
-		ConcurrentHashMap<String, Computer> computers;
+		ArrayList<Computer> computers;
 		//TODO: create the ware house
 		JSONParser parser = new JSONParser();
 		Object jObj= new Object();

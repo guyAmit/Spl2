@@ -47,6 +47,7 @@ public class Check_Administrative_Obligations extends Action<Boolean> {
 				student.setSignature(computerPromise.get().checkAndSign(coursesIds, student.getGrades()));
 			}
 			Simulator.wareHouse.freeComputer(this.computerId);
+			Simulator.phaseActions.countDown();
 			this.complete(true);
 		});
 	}
