@@ -39,8 +39,8 @@ public class OneAccessQueue<E> extends LinkedList<E>{
 	
 	
 	/**
-	 * <h1>isFree</h1>
-	 * <p>{@link #frontLock} will return True if no other thread is working on the front of the Queue</p>
+	 * <h1>isFrontFree</h1>
+	 * <p>{@link #isFrontLock} will return True if no other thread is working on the front of the Queue</p>
 	 * @return if the queue is free to work
 	 */
 	public Boolean isFrontFree(){
@@ -119,14 +119,25 @@ public class OneAccessQueue<E> extends LinkedList<E>{
 		}
 		return false;
 	}
-
-	 /**
-	  * <h1>length</h1>
-	  * @return the length of the queue
-	  */
-	 public int length() {
-		 return super.size();
-	 }
+	
+	/**
+	 * <h1>freeBackLock</h1>
+	 * try to free the back lock
+	 * @return true if the operation was a success
+	 */
+	public boolean freeBackLock() {
+		return this.backLock.compareAndSet(false, true);
+	}
+	
+	
+	/**
+	 * <h1>freeFrontLock</h1>
+	 * try to free the front lock
+	 * @return true if the operation was a success
+	 */
+	public boolean freeFrontLock() {
+		return this.frontLock.compareAndSet(false, true);
+	}
 	 
 	 @Override
 	 public String toString() {

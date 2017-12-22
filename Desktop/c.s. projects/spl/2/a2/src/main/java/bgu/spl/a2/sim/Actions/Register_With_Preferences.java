@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bgu.spl.a2.Action;
+import bgu.spl.a2.sim.Simulator;
 /**
  * 
  * @author Guy-Amit
@@ -25,6 +26,7 @@ public class Register_With_Preferences extends Action<Boolean> {
 	public Register_With_Preferences(ArrayList<String> preferences, ArrayList<Integer> Grades) {
 		this.preferences=preferences;
 		this.grades=Grades;
+		this.actionName="Register with preferences";
 	}
 	
 	public Register_With_Preferences(ArrayList<String> preferences) {
@@ -57,12 +59,15 @@ public class Register_With_Preferences extends Action<Boolean> {
 					this.call=null; //enabling the action to go back into the queue s.t. it will not start from calling the callback
 					this.pool.submit(this, this.actorId, this.actorState); //submitting the action back into his queue
 				}
-				else
+				else {
 					this.complete(true);
+					Simulator.phaseActions.countDown();
+				}
 			});
 		}
 		else {
 			this.complete(false);
+			Simulator.phaseActions.countDown();
 			System.out.println("regestration with prefernces failed");
 		}
 	}

@@ -12,10 +12,17 @@ public class ConformationAction extends Action<Boolean> {
 	 * indeed functioning.
 	 */
 	public ConformationAction() {
+		this.actionName="ConformationAction";
 	}
 	
 	@Override
 	public void start() {	
 		complete(true);
 	}
+	
+	@Override
+	public String toString() {
+		return "ConformationAction"+this.actorId;
+	}
+	
 }

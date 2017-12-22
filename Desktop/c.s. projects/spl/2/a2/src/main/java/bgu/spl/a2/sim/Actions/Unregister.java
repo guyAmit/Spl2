@@ -3,6 +3,7 @@ package bgu.spl.a2.sim.Actions;
 import java.util.ArrayList;
 
 import bgu.spl.a2.Action;
+import bgu.spl.a2.sim.Simulator;
 import bgu.spl.a2.sim.Actions.subActions.UnRegistrationConformation;
 import bgu.spl.a2.sim.privateStates.CoursePrivateState;
 import bgu.spl.a2.sim.privateStates.StudentPrivateState;
@@ -24,6 +25,7 @@ public class Unregister extends Action<Boolean> {
 	public Unregister(String StudentId) {
 		this.studentId=studentId;
 		this.studentPrivateState = (StudentPrivateState)this.pool.getActors().get(StudentId);
+		this.actionName="Unregister";
 	}
 	
 	
@@ -56,7 +58,7 @@ public class Unregister extends Action<Boolean> {
 					}
 					else {System.out.println("unregistration failed");}
 					this.complete(resualt);
-
+					Simulator.phaseActions.countDown();
 				});
 				
 		}

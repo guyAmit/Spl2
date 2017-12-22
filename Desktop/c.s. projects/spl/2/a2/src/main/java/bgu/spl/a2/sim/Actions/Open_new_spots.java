@@ -23,6 +23,7 @@ public class Open_new_spots extends Action<Object> {
 	public Open_new_spots(String courseId,int spaces) {
 		this.courseId=courseId;
 		this.coursePrivateState=(CoursePrivateState)this.actorState; 
+		this.actionName="Open new spots";
 	}
 	
 	/**
@@ -39,8 +40,7 @@ public class Open_new_spots extends Action<Object> {
 			else {System.out.println("course is closed");}
 			}
 		else {System.out.println("course does not exists");}
-    	actionInPhase.decrementAndGet();
-	}
+		}
 	
 	@Override
 	public String toString() {

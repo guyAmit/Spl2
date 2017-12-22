@@ -7,11 +7,15 @@
 package bgu.spl.a2.sim;
 import java.util.HashMap;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import bgu.spl.a2.Action;
@@ -33,6 +37,8 @@ public class Simulator {
 
 	
 	public static ActorThreadPool actorThreadPool;
+	public static Warehouse wareHouse;
+	public static CountDownLatch phaseActions;
 	
 	/**
 	* Begin the simulation Should not be called before attachActorThreadPool()
@@ -59,6 +65,17 @@ public class Simulator {
 		try {
 			actorThreadPool.shutdown();
 		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			FileOutputStream outStram = new FileOutputStream("result.ser");
+			ObjectOutputStream oos = new ObjectOutputStream(outStram);
+			oos.writeObject(actorThreadPool.getActors());
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -113,7 +130,7 @@ public class Simulator {
 	@SuppressWarnings("unchecked")
 	public static void initPhase1Actions(JSONObject obj) {
 		JSONArray Phase1ActionsArray = (JSONArray)obj.get("Phase 1");
-		Action.actionInPhase=new AtomicInteger(Phase1ActionsArray.size());
+		phaseActions = new CountDownLatch(Phase1ActionsArray.size());
 		Phase1ActionsArray.forEach(entry -> {
 			String type = ((JSONObject)entry).get("Action").toString();
 			if(type.compareTo("Add Student")==0) {//#done
@@ -153,7 +170,7 @@ public class Simulator {
 	@SuppressWarnings("unchecked")
 	public static void initPhase2Actions(JSONObject obj) {
 		JSONArray Phase2ActionsArray = (JSONArray)obj.get("Phase 2");
-		ArrayList<Action<?>> actions= new ArrayList<>();
+		phaseActions = new CountDownLatch(Phase2ActionsArray.size());
 		Phase2ActionsArray.forEach(entry -> {
 			String type = ((JSONObject)entry).get("Action").toString();
 			if(type.compareTo("Add Student")==0) {//#done
@@ -188,26 +205,45 @@ public class Simulator {
 	
 	public static  void main(String [] args) {
 		//TODO: replace method body with real implementation
-		ArrayList<Computer> computers;
+		ConcurrentHashMap<String, Computer> computers;
+		//TODO: create the ware house
 		JSONParser parser = new JSONParser();
+		Object jObj= new Object();
 		try(FileReader reader = new FileReader(args[0])){
-			Object jObj = parser.parse(reader);
-			attachActorThreadPool(initThreadPool((JSONObject)jObj));
+			jObj = parser.parse(reader);
 			computers = initComputers((JSONObject)jObj);
+			attachActorThreadPool(initThreadPool((JSONObject)jObj));
 			initPhase1Actions((JSONObject)jObj); //phase1 parsing is working
 			start();
-			actorThreadPool.shutdown();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }catch(ParseException e) {
         	e.printStackTrace();
-        } catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
+        }
+//		Thread simulator = new Thread(()->{
+//			try {
+//				phaseActions.await();
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			finally {
+//				try {
+//					phaseActions.await();
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+//	});
+//	simulator.start();
+//	try {
+//		simulator.join();
+//	} catch (InterruptedException e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//	}
 	}
 }

@@ -6,6 +6,7 @@ package bgu.spl.a2.sim.Actions;
 import java.util.ArrayList;
 
 import bgu.spl.a2.Action;
+import bgu.spl.a2.sim.Simulator;
 import bgu.spl.a2.sim.Actions.subActions.*;
 import bgu.spl.a2.sim.privateStates.CoursePrivateState;
 import bgu.spl.a2.sim.privateStates.StudentPrivateState;
@@ -31,6 +32,7 @@ public class Participate_In_Course extends Action<Boolean> {
 		this.studendId=studentId;
 		this.grade = new Integer(grade);
 		this.studentPrivateState = (StudentPrivateState)this.pool.getPrivaetState(studentId);
+		this.actionName="Particapate in course";
 	}
 	
 	public Participate_In_Course(String studentId) {
@@ -69,15 +71,15 @@ public class Participate_In_Course extends Action<Boolean> {
 					((CoursePrivateState)this.actorState).register(this.studendId);
 				}
 				else {System.out.println("registration failed");}
-		    	actionInPhase.decrementAndGet();
+				Simulator.phaseActions.countDown();
 			});
 			
 		}else {
 			this.complete(false);
-	    	actionInPhase.decrementAndGet();
+			Simulator.phaseActions.countDown();
 			System.out.println("no spots available");
 		}
-		
+
 	}
 	
 	@Override

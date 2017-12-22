@@ -29,6 +29,7 @@ public class UnRegistrationConformation extends Action<Boolean> {
 		this.courseId=courseId;
 		this.grade=new Integer(0);
 		this.coursePrivateState = (CoursePrivateState)this.pool.getPrivaetState(courseId);
+		this.actionName="UnRegistrationConformation";
 
 	}
 	
@@ -46,6 +47,11 @@ public class UnRegistrationConformation extends Action<Boolean> {
 		}
 		else
 			this.complete(false);
+	}
+	
+	@Override
+	public String toString() {
+		return "UnRegistration conformation: "+this.actorId;
 	}
 
 }

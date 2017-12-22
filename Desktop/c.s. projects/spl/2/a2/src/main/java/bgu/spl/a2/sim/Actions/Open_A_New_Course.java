@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bgu.spl.a2.Action;
+import bgu.spl.a2.sim.Simulator;
 import bgu.spl.a2.sim.Actions.subActions.ConformationAction;
 import bgu.spl.a2.sim.privateStates.CoursePrivateState;
 import bgu.spl.a2.sim.privateStates.DepartmentPrivateState;
@@ -31,6 +32,7 @@ public class Open_A_New_Course extends Action<Boolean> {
 	public Open_A_New_Course(String courseId,int spaces,List<String> prequisites ) {
 		this.courseId=courseId;
 		this.spaces=spaces;
+		this.actionName="Open new course";
 		this.coursePrivateState = new CoursePrivateState(spaces,0,
 				new ArrayList<String>(),prequisites);
 	}
@@ -59,7 +61,7 @@ public class Open_A_New_Course extends Action<Boolean> {
 			if(resualt) {
 				((DepartmentPrivateState)this.actorState).getCourseList().add(courseId);
 			}else {System.out.println("student was not created");}
-	    	actionInPhase.decrementAndGet();
+			Simulator.phaseActions.countDown();
 		});
 	}
 	

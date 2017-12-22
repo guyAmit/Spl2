@@ -29,6 +29,7 @@ public class RegistrationConformation extends Action<Boolean> {
 		if(grade!=null) this.grade = grade;
 		else grade = new Integer(0);
 		this.coursePrivateState = (CoursePrivateState)this.pool.getPrivaetState(courseId);
+		this.actionName="Registration conformation";
 	}
 	
 	public RegistrationConformation(String courseId) {
@@ -52,5 +53,13 @@ public class RegistrationConformation extends Action<Boolean> {
 		else
 			this.complete(false);
 	}
+	
+	@Override
+	public String toString() {
+		return "RegistrationConformation: "+this.actorId;
+	}
 
 }
+
+
+

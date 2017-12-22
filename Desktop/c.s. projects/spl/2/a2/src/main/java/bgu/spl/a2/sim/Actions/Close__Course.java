@@ -3,6 +3,7 @@ package bgu.spl.a2.sim.Actions;
 import java.util.ArrayList;
 
 import bgu.spl.a2.Action;
+import bgu.spl.a2.sim.Simulator;
 import bgu.spl.a2.sim.Actions.subActions.CloseCourseConformation;
 import bgu.spl.a2.sim.privateStates.CoursePrivateState;
 import bgu.spl.a2.sim.privateStates.DepartmentPrivateState;
@@ -24,6 +25,7 @@ public class Close__Course extends Action<Boolean> {
 	public Close__Course(String courseId) {
 		this.courseId=courseId;
 		this.coursePrivateState = (CoursePrivateState)this.pool.getActors().get(this.courseId);
+		this.actionName="Close Course";
 	}
 	
 	/**
@@ -55,7 +57,7 @@ public class Close__Course extends Action<Boolean> {
 					this.complete(false);
 					System.out.println("course was not closed");
 					}
-		    	actionInPhase.decrementAndGet();
+				Simulator.phaseActions.countDown();
 			});
 		}
 		else {
@@ -69,5 +71,6 @@ public class Close__Course extends Action<Boolean> {
 	public String toString() {
 		return "Close Course: "+this.courseId;
 	}
+	
 
 }

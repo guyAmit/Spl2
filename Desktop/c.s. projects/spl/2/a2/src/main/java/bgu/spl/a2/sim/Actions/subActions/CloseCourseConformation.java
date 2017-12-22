@@ -22,6 +22,7 @@ public class CloseCourseConformation extends Action<Boolean> {
 	public CloseCourseConformation() {
 		this.coursePrivateState = (CoursePrivateState)this.actorState;
 		this.studentsIds = (ArrayList<String>) coursePrivateState.getRegStudents();
+		this.actionName="Close course conformation";
 	}
 	
 	@Override
@@ -47,6 +48,11 @@ public class CloseCourseConformation extends Action<Boolean> {
 		});
 		
 
+	}
+	
+	@Override
+	public String toString() {
+		return "Close course conformation: "+this.actorId;
 	}
 
 }

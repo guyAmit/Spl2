@@ -46,15 +46,18 @@ public class ActorThreadPool {
 
 				while(this.isShutDown.get()) { //should be true until changed by the shutdown method
 					for (Map.Entry<String, OneAccessQueue<Action<?>>> entry : actions.entrySet()) {
-						if(entry.getValue().tryToLockDequeue()) {
-							if(entry.getValue().size()>0) {
-								Action action = entry.getValue().dequeue();
-								if(action==null) continue;
-								String actorId = entry.getKey();
-								action.handle(this, actorId, this.getPrivaetState(actorId));
+						if(entry.getValue().size() >0) {
+							if(entry.getValue().tryToLockDequeue()) {
+									Action action = entry.getValue().dequeue();
+									if(action==null) continue;
+									String actorId = entry.getKey();
+									PrivateState actorPrivateState = this.getPrivaetState(actorId);
+									actorPrivateState.addRecord(action.getActionName());
+									action.handle(this, actorId, actorPrivateState);
+								}
 							}
 						}
-					}
+
 				}
 				
 		
