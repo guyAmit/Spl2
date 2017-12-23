@@ -50,14 +50,12 @@ public class Close__Course extends Action<Boolean> {
 				//and also after the action will get back into his original
 				//queue
 				Boolean resualt = subActions.get(0).getResult().get();
-				this.complete(resualt);
 				if(resualt) {
 					((DepartmentPrivateState)this.actorState).getCourseList().remove(this.courseId);
-					this.complete(true);
 				}else {
-					this.complete(false);
 					System.out.println("course was not closed");
 					}
+				this.complete(resualt);
 				Simulator.phaseActions.countDown();
 			});
 		}

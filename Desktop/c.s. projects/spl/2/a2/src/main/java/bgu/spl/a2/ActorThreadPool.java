@@ -58,7 +58,6 @@ public class ActorThreadPool {
 									actorPrivateState.addRecord(action.getActionName());
 									action.handle(this, actorId, actorPrivateState);
 									monitor.inc();
-									entry.getValue().freeFrontLock(); // checking that the queue indeed get freed
 								}
 							}
 						}
@@ -103,6 +102,8 @@ public class ActorThreadPool {
 	 *            actor's private state (actor's information)
 	 * @see if the actorId is not in the private states map, thats mean that we need to crete<br>
 	 * 		a new department private state because there are no other options.
+	 * @sync explanation: we want to prevent a state where we have added the new action queue into</br>
+	 * 		into the data structure without his private state
 	 */
 	public void submit(Action<?> action, String actorId, PrivateState actorState) {
 		OneAccessQueue<Action<?>> actionQueue = this.actions.get(actorId);
@@ -129,8 +130,10 @@ public class ActorThreadPool {
 				actionQueue.enqueue(action);
 			}
 			DepartmentPrivateState depratmentPrivateState = new DepartmentPrivateState();
-			this.actions.putIfAbsent(actorId, actionQueue);
-			this.actors.put(actorId, depratmentPrivateState);
+			synchronized (depratmentPrivateState) {
+				this.actions.putIfAbsent(actorId, actionQueue);
+				this.actors.put(actorId, depratmentPrivateState);
+			}
 		}
 	}
 		

@@ -14,20 +14,18 @@ import bgu.spl.a2.sim.privateStates.StudentPrivateState;
 public class UnRegistrationConformation extends Action<Boolean> {
 
 	/**
-	 * <h1>RegistrationConformation action</h1>
+	 * <h1>UnRegistrationConformation action</h1>
 	 * <h2>general notes:</h2>>
 	 * 	this.actorState is the private state of the student
 	 *	this.actorId is the Id of the student
 	*/
 	
 	private String courseId;
-	private Integer grade;//optional
 	private CoursePrivateState coursePrivateState;
 
 	
 	public UnRegistrationConformation(String courseId) {
 		this.courseId=courseId;
-		this.grade=new Integer(0);
 		this.actionName="UnRegistrationConformation";
 
 	}

@@ -24,6 +24,7 @@ public class Open_new_spots extends Action<Object> {
 		this.courseId=courseId;
 		this.coursePrivateState=(CoursePrivateState)this.actorState; 
 		this.actionName="Open new spots";
+		this.spaces=spaces;
 	}
 	
 	/**

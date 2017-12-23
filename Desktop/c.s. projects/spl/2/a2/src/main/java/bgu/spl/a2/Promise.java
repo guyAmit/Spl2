@@ -70,8 +70,6 @@ public class Promise<T>{
 	 * resolved via the {@link #subscribe(callback)} method should
 	 * be executed before this method returns
 	 *
-     * @throws IllegalStateException
-     * 			in the case where this object is already resolved
 	 * @param value
 	 *            - the value to resolve this promise object with
 	 */

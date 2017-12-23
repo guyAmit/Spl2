@@ -98,7 +98,7 @@ public class CoursePrivateState extends PrivateState{
 	
 	@Override
 	public String toString() {
-		return "course private state:\n"+"Actions:"+this.getLogger()+"\n"+"registerd students:"+this.regStudents+"\n avilable spots: "
+		return "course private state:\n"+"Actions:"+this.getLogger()+"\n"+"registerd students:"+this.regStudents+"\n"+"avilable spots: "
 				+this.availableSpots+"\n"+"prequisites:"+this.prequisites;
 	}
 }

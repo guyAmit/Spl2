@@ -10,7 +10,7 @@ public class CloseCourseConformation extends Action<Boolean> {
 
 
 	/**
-	 * <h1>Participate_In_Course action</h1>
+	 * <h1>CloseCourseConformationaction</h1>
 	 * <h2>general notes:</h2>>
 	 * 	this.actorState is the private state of the course
 	 *	this.actorId is the Id of the course
@@ -20,14 +20,13 @@ public class CloseCourseConformation extends Action<Boolean> {
 	private CoursePrivateState coursePrivateState;
 	
 	public CloseCourseConformation() {
-		this.coursePrivateState = (CoursePrivateState)this.actorState;
-		this.studentsIds = (ArrayList<String>) coursePrivateState.getRegStudents();
 		this.actionName="Close course conformation";
 	}
 	
 	@Override
 	protected void start() {
-		// TODO Auto-generated method stub
+		this.coursePrivateState = (CoursePrivateState)this.actorState;
+		this.studentsIds = (ArrayList<String>) coursePrivateState.getRegStudents();
 		ArrayList<Action<Boolean>> subActions = new ArrayList<>();
 		for (String studentId : studentsIds) {
 			UnRegistrationConformation conf = new UnRegistrationConformation(this.actorId);
