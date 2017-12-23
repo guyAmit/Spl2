@@ -1,5 +1,6 @@
 package bgu.spl.a2;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -38,7 +39,7 @@ public class ActorThreadPool {
 	 */
 	public ActorThreadPool(int nthreads) {
 		// TODO: replace method body with real implementation
-		this.actors= new ConcurrentHashMap<String,PrivateState>();
+		this.actors= new HashMap<String,PrivateState>();
 		this.actions = new ConcurrentHashMap<String,OneAccessQueue<Action<?>>>();
 		this.threads = new ArrayList<Thread>();
 		monitor = new VersionMonitor();
@@ -69,8 +70,6 @@ public class ActorThreadPool {
 						}
 
 				}
-				
-		
 				
 			}));
 		}
@@ -120,7 +119,7 @@ public class ActorThreadPool {
 				actionQueue.tryToLockEnqueue();
 				actionQueue.enqueue(action);
 			}
-			this.actions.put(actorId, actionQueue);
+			this.actions.putIfAbsent(actorId, actionQueue);
 			this.actors.put(actorId,actorState);
 		}
 		else { //creating a new department, and putting the action into it
@@ -130,7 +129,7 @@ public class ActorThreadPool {
 				actionQueue.enqueue(action);
 			}
 			DepartmentPrivateState depratmentPrivateState = new DepartmentPrivateState();
-			this.actions.put(actorId, actionQueue);
+			this.actions.putIfAbsent(actorId, actionQueue);
 			this.actors.put(actorId, depratmentPrivateState);
 		}
 	}
@@ -148,6 +147,7 @@ public class ActorThreadPool {
 	 */
 	public void shutdown() throws InterruptedException {
 			isShutDown.compareAndSet(true, false);
+			this.threads.forEach(thread->{thread.interrupt();});
 	}
 
 	/**

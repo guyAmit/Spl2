@@ -79,6 +79,7 @@ public class Simulator {
 		simulator.start();
 		try {
 			simulator.join();
+			end();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

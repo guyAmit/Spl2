@@ -28,6 +28,7 @@ public class Add_Student extends Action<Boolean> {
 	private StudentPrivateState studentPrivateState;
 
 	public  Add_Student(String studentId) {
+		this.actionName="Add student";
 		this.studentId=studentId;
 		this.studentPrivateState = new StudentPrivateState();
 	}
@@ -38,7 +39,9 @@ public class Add_Student extends Action<Boolean> {
 	 * 	we will do it by adding the new student to the department student list first<br>
 	 * and then we will send a {@link #ConformationAction} action to the newly created student actor to make<br>
 	 * sure it is really created </p>
-	 */
+	 * @sync explanation : the registered student list is not a concurrent data structure i.e. it does not support</br>
+	 * the addition of two items at the same time 
+	 **/
 	@Override
 	protected void start() {
 		ArrayList<Action<Boolean>> subActions = new ArrayList<>();
@@ -52,7 +55,10 @@ public class Add_Student extends Action<Boolean> {
 			//queue
 			Boolean resualt = subActions.get(0).getResult().get();
 			if(resualt) {
-				((DepartmentPrivateState)this.actorState).getStudentList().add(this.studentId);
+				List<String> registeredStudents = ((DepartmentPrivateState)this.actorState).getStudentList();
+				synchronized (registeredStudents) {
+					registeredStudents.add(this.studentId);
+				}
 			}else {System.out.println("student was not created");}
 			this.complete(resualt);
 			Simulator.phaseActions.countDown();

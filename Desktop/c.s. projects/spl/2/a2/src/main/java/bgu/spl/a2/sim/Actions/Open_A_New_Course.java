@@ -44,6 +44,8 @@ public class Open_A_New_Course extends Action<Boolean> {
 	 * 	we will do it by adding the new course to the department course list first<br>
 	 * and then we will send a {@link #ConformationAction} action to the newly created course actor to make<br>
 	 * sure it is really created </p>
+	 * @sync explanation : the courses list is not a concurrent data structure i.e. it does not support</br>
+	 * the addition of two items at the same time 
 	 */
 	@Override
 	protected void start() {
@@ -57,10 +59,13 @@ public class Open_A_New_Course extends Action<Boolean> {
 			//and also after the action will get back into his original
 			//queue
 			Boolean resualt = subActions.get(0).getResult().get();
-			this.complete(resualt);
+			List<String> coursesIds = ((DepartmentPrivateState)this.actorState).getCourseList();
 			if(resualt) {
-				((DepartmentPrivateState)this.actorState).getCourseList().add(courseId);
+				synchronized (coursesIds) {
+					coursesIds.add(courseId);
+				}
 			}else {System.out.println("student was not created");}
+			this.complete(resualt);
 			Simulator.phaseActions.countDown();
 		});
 	}

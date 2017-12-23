@@ -35,7 +35,7 @@ public class DepartmentPrivateState extends PrivateState{
 	
 	@Override
 	public String toString() {
-		return "department private state:\n"+"students:"+this.studentList+"\n"
+		return "department private state:\n"+"Actions:"+this.getLogger()+"\n"+"students:"+this.studentList+"\n"
 				+"courses: "+this.courseList;
 	}
 }

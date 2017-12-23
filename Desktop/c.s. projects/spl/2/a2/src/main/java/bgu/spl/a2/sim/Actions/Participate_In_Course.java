@@ -67,7 +67,7 @@ public class Participate_In_Course extends Action<Boolean> {
 				//queue
 				Boolean resualt = subActions.get(0).getResult().get();
 				this.complete(resualt);
-				if(resualt) {System.out.println("registration failed");}
+				if(!resualt) {System.out.println("registration failed");}
 				Simulator.phaseActions.countDown();
 			});
 			
