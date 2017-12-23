@@ -55,7 +55,7 @@ public class CoursePrivateState extends PrivateState{
 	 * change the private state of this course<br>
 	 * to a closed one
 	 */
-	public void closeCourse() {
+	public synchronized void closeCourse() {
 		this.regStudents.clear();
 		this.availableSpots=-1;
 		this.registered=0;
@@ -78,7 +78,7 @@ public class CoursePrivateState extends PrivateState{
 	 * of the course when a student is trying to register
 	 * @param studentId
 	 */
-	synchronized public void register(String studentId) {
+	 public synchronized void register(String studentId) {
 		this.regStudents.add(studentId);
 		this.registered++;
 		this.availableSpots--;
@@ -90,7 +90,7 @@ public class CoursePrivateState extends PrivateState{
 	 * of the course when a student is trying to unRegister
 	 * @param studentId
 	 */
-	public void unRegister(String studenId) {
+	public synchronized void unRegister(String studenId) {
 		this.regStudents.remove(studenId);
 		this.availableSpots++;
 		this.registered--;

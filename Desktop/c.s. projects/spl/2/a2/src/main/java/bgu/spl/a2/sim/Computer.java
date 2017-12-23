@@ -2,6 +2,7 @@ package bgu.spl.a2.sim;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Computer {
 
@@ -25,8 +26,16 @@ public class Computer {
 	 * @return a signature if couersesGrades grades meet the conditions
 	 */
 	public long checkAndSign(List<String> courses, Map<String, Integer> coursesGrades){
-		//TODO: replace method body with real implementation
-		throw new UnsupportedOperationException("Not Implemented Yet.");
+		AtomicBoolean passed = new AtomicBoolean(true);
+		for (String course : courses) {
+			if(coursesGrades.containsKey(course)==false || coursesGrades.get(course)<56) {
+				passed.compareAndSet(true, false);
+				break;
+			}
+		}
+		if(passed.get()) return successSig;
+		else return failSig;
+		
 	}
 	
 	public String getComputerType() {

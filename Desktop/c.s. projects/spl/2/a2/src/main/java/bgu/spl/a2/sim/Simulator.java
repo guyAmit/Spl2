@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
@@ -54,24 +55,19 @@ public class Simulator {
 			try {
 				initPhaseActions((JSONObject)jObj,Phase1); //phase is working!!!
 				actorThreadPool.start();
-				System.out.println("<<<phase 1 started>>>");
 				phaseActions.await();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			try {
 				initPhaseActions((JSONObject)jObj,Phase2);
-				System.out.println("<<<phase 2 started>>>");
 				ActorThreadPool.monitor.inc(); //waking up the suspended threads in the actor thread pool
 				phaseActions.await();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			try {
 				initPhaseActions((JSONObject)jObj,Phase3);
-				System.out.println("<<<phase 3 started>>>");
 				ActorThreadPool.monitor.inc(); //waking up the suspended threads in the actor thread pool
 				phaseActions.await();
 			} catch (InterruptedException e) {
@@ -81,6 +77,11 @@ public class Simulator {
 			
 	});
 		simulator.start();
+		try {
+			simulator.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
     }
 	
 	/**
@@ -191,7 +192,7 @@ public class Simulator {
 				ActionsCreator.createCloseCourseAction((JSONObject)entry, actorThreadPool);
 			}
 			else if(type.compareTo("Administrative Check")==0) {//#done
-				ActionsCreator.createAddStudentAction((JSONObject)entry, actorThreadPool);
+				ActionsCreator.createCheckAdministrativeObligations((JSONObject)entry, actorThreadPool);
 			}
 		});
 	}
@@ -214,5 +215,9 @@ public class Simulator {
         	e.printStackTrace();
         }
 		start();
+		Set<String> actors = actorThreadPool.getActors().keySet();
+		actors.forEach(actor->{
+			System.out.println(actor+":\n"+actorThreadPool.getPrivaetState(actor)+"\n");
+		});
 	}
 }

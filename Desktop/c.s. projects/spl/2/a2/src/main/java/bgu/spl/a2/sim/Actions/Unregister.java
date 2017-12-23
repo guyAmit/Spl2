@@ -22,7 +22,7 @@ public class Unregister extends Action<Boolean> {
 	private String studentId;
 	private StudentPrivateState studentPrivateState;
 	
-	public Unregister(String StudentId) {
+	public Unregister(String studentId) {
 		this.studentId=studentId;
 		this.actionName="Unregister";
 	}
