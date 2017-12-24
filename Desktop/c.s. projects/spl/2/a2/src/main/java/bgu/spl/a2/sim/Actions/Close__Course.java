@@ -63,7 +63,7 @@ public class Close__Course extends Action<Boolean> {
 			this.complete(false);
 			System.out.println("course is not in the department");
 		}
-		
+		this.actorState.addRecord(actionName);
 	}
 	
 	@Override

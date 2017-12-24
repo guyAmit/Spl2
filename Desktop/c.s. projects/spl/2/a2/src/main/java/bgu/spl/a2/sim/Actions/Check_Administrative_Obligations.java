@@ -59,6 +59,7 @@ public class Check_Administrative_Obligations extends Action<Boolean> {
 				this.complete(true);
 			});
 		});
+		this.actorState.addRecord(actionName);
 	}
 	
 	

@@ -51,4 +51,8 @@ public class StudentPrivateState extends PrivateState{
 		return "student private state:\n"+"Actions:"+this.getLogger()+"\n"+"grades"+this.getGrades()+"\n"+
 				"signature:"+this.signature;
 	}
+
+	public String getGrade(String course) {
+		return this.grades.get(course).toString();
+	}
 }

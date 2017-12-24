@@ -60,9 +60,9 @@ public class Add_Student extends Action<Boolean> {
 					registeredStudents.add(this.studentId);
 				}
 			}else {System.out.println("student was not created");}
-			this.complete(resualt);
-			
+			this.complete(resualt);			
 		});
+		this.actorState.addRecord(actionName);
 	}
 	
 	@Override

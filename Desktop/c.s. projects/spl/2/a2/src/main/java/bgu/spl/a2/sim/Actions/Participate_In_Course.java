@@ -97,7 +97,7 @@ public class Participate_In_Course extends Action<Boolean> {
 			this.complete(false);
 			System.out.println("no spots available");
 		}
-
+		this.actorState.addRecord(actionName);
 }
 
 	

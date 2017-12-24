@@ -60,7 +60,6 @@ public class ActorThreadPool {
 										if(action==null) continue;
 										String actorId = entry.getKey();
 										PrivateState actorPrivateState = this.getPrivaetState(actorId);
-										actorPrivateState.addRecord(action.getActionName());
 										action.handle(this, actorId, actorPrivateState);
 										entry.getValue().freeFrontLock();
 										monitor.inc();

@@ -68,6 +68,7 @@ public class Register_With_Preferences extends Action<Boolean> {
 			this.complete(false);			
 			System.out.println("regestration with prefernces failed");
 		}
+		this.actorState.addRecord(actionName);
 	}
 	
 	@Override
