@@ -55,7 +55,7 @@ public class Participate_In_Course extends Action<Boolean> {
 	protected void start() {
 		// TODO Auto-generated method stub
 		this.studentPrivateState = (StudentPrivateState)this.pool.getPrivaetState(this.studendId);
-		if(((CoursePrivateState)this.actorState).getAvailableSpots()>0) {
+		if(((CoursePrivateState)this.actorState).getAvailableSpots()>0 & this.studentPrivateState.meetRequirements(((CoursePrivateState)this.actorState).getPrequisites())) {
 			/****Indicating that the registering is in proccses****
 			 *  --decreasing the spots, so other student wont be able to register
 			 *  --adding the student to the list, so other actions will 
@@ -95,7 +95,7 @@ public class Participate_In_Course extends Action<Boolean> {
 			});
 		}else {
 			this.complete(false);
-			System.out.println("no spots available");
+			System.out.println("registration failed");
 		}
 		this.actorState.addRecord(actionName);
 }
