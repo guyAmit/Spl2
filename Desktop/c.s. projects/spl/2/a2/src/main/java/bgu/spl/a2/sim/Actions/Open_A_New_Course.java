@@ -19,7 +19,7 @@ import bgu.spl.a2.sim.privateStates.StudentPrivateState;
 public class Open_A_New_Course extends Action<Boolean> {
 
 	/**
-	 * <h1>add student action</h1>
+	 * <h1>Open_A_New_Course action</h1>
 	 * <h2>general notes:</h2>>
 	 * 	this.actorState is the private state of the department
 	 *	this.actorId is the Id of the department
@@ -61,12 +61,10 @@ public class Open_A_New_Course extends Action<Boolean> {
 			Boolean resualt = subActions.get(0).getResult().get();
 			List<String> coursesIds = ((DepartmentPrivateState)this.actorState).getCourseList();
 			if(resualt) {
-				synchronized (coursesIds) {
-					coursesIds.add(courseId);
+				coursesIds.add(this.courseId);
 				}
-			}else {System.out.println("student was not created");}
+			else {System.out.println("student was not created");}			
 			this.complete(resualt);
-			Simulator.phaseActions.countDown();
 		});
 	}
 	

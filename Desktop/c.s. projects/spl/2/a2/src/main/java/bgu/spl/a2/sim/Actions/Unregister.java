@@ -57,13 +57,12 @@ public class Unregister extends Action<Boolean> {
 						((CoursePrivateState)this.actorState).unRegister(this.studentId);
 					}
 					else {System.out.println("unregistration failed");}
-					this.complete(resualt);
-					Simulator.phaseActions.countDown();
+					this.complete(resualt);					
 				});
 				
 		}
 		else {
-			this.complete(false);
+			this.complete(false);			
 			System.out.println("student is not registerd");
 		}
 	}
@@ -72,6 +71,6 @@ public class Unregister extends Action<Boolean> {
 	
 	@Override
 	public String toString() {
-		return "Unregister, <student: "+this.studentId+", course"+this.actorId+">";
+		return "Unregister student: "+this.studentId;
 	}
 }

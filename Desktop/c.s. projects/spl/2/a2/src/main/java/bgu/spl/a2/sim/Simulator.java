@@ -52,30 +52,23 @@ public class Simulator {
 	*/
     public static void start(){
 		simulator = new Thread(()->{
-			try {
-				initPhaseActions((JSONObject)jObj,Phase1); //phase is working!!!
-				actorThreadPool.start();
-				phaseActions.await();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			try {
-				initPhaseActions((JSONObject)jObj,Phase2);
-				ActorThreadPool.monitor.inc(); //waking up the suspended threads in the actor thread pool
-				phaseActions.await();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			try {
-				initPhaseActions((JSONObject)jObj,Phase3);
-				ActorThreadPool.monitor.inc(); //waking up the suspended threads in the actor thread pool
-				phaseActions.await();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			
+			initPhaseActions((JSONObject)jObj,Phase1);
+			actorThreadPool.start();
+			while(ActorThreadPool.size.get()!=0) {
 			}
 			
-	});
+			initPhaseActions((JSONObject)jObj,Phase2);
+			ActorThreadPool.monitor.inc();
+			while(ActorThreadPool.size.get()!=0) {
+			}
+			
+			initPhaseActions((JSONObject)jObj,Phase3);
+			ActorThreadPool.monitor.inc();
+			while(ActorThreadPool.size.get()!=0) {
+			}
+		});
+		
 		simulator.start();
 		try {
 			simulator.join();
@@ -168,7 +161,6 @@ public class Simulator {
 	@SuppressWarnings("unchecked")
 	public static void initPhaseActions(JSONObject obj,String phase) {
 		JSONArray PhaseActionsArray = (JSONArray)obj.get(phase);
-		phaseActions = new CountDownLatch(PhaseActionsArray.size());
 		PhaseActionsArray.forEach(entry -> {
 			String type = ((JSONObject)entry).get("Action").toString();
 			if(type.compareTo("Add Student")==0) {//#done

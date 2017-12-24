@@ -60,14 +60,12 @@ public class Register_With_Preferences extends Action<Boolean> {
 					this.pool.submit(this, this.actorId, this.actorState); //submitting the action back into his queue
 				}
 				else {
-					this.complete(true);
-					Simulator.phaseActions.countDown();
+					this.complete(true);					
 				}
 			});
 		}
 		else {
-			this.complete(false);
-			Simulator.phaseActions.countDown();
+			this.complete(false);			
 			System.out.println("regestration with prefernces failed");
 		}
 	}

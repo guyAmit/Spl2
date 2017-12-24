@@ -81,7 +81,6 @@ public class OneAccessQueue<E> extends LinkedList<E>{
 		if(!this.frontLock.get()) {
 			if(super.size()>0) {
 				E returnVal = super.removeFirst();
-				this.frontLock.compareAndSet(false, true);
 				return returnVal;
 			}
 			return null;

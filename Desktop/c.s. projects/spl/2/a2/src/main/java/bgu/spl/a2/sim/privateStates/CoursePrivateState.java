@@ -55,22 +55,20 @@ public class CoursePrivateState extends PrivateState{
 	 * change the private state of this course<br>
 	 * to a closed one
 	 */
-	public synchronized void closeCourse() {
+	public void closeCourse() {
 		this.regStudents.clear();
 		this.availableSpots=-1;
 		this.registered=0;
 	}
 	/**
-	 * <h1>addSpots</h1>
-	 * open new spots to the course
-	 * @see the sync is to prevent other threads from changing the number of
-	 * 		Available spots in the course while this thread is changing it
+	 * <h1>changeSpots</h1>
+	 * change the number of spots in the course.
+	 * negative number for decreasing
+	 * Positive for increasing
 	 * @param spaces
 	 */
-	public void addSpots(int spaces) {
-		synchronized(this.availableSpots) {
+	public void changeSpots(int spaces) {	 
 			this.availableSpots+=spaces;
-		}
 	}
 	/**
 	 * <h1>register</h1>
@@ -78,7 +76,7 @@ public class CoursePrivateState extends PrivateState{
 	 * of the course when a student is trying to register
 	 * @param studentId
 	 */
-	 public synchronized void register(String studentId) {
+	 public void register(String studentId) {
 		this.regStudents.add(studentId);
 		this.registered++;
 		this.availableSpots--;
@@ -90,7 +88,7 @@ public class CoursePrivateState extends PrivateState{
 	 * of the course when a student is trying to unRegister
 	 * @param studentId
 	 */
-	public synchronized void unRegister(String studenId) {
+	public void unRegister(String studenId) {
 		this.regStudents.remove(studenId);
 		this.availableSpots++;
 		this.registered--;

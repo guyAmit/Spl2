@@ -4,7 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.swing.plaf.SliderUI;
+
+import bgu.spl.a2.sim.Simulator;
 import bgu.spl.a2.sim.privateStates.DepartmentPrivateState;
 
 /**
@@ -21,10 +25,10 @@ import bgu.spl.a2.sim.privateStates.DepartmentPrivateState;
 public class ActorThreadPool {
 	
 	private ArrayList<Thread> threads; // hold all the threads, and a boolean representing whether they should stop working
-	private AtomicBoolean isShutDown;
 	private Map<String,PrivateState> actors; //<actorID,private state>
 	private Map<String,OneAccessQueue<Action<?>>> actions; // <actorID,actionQueue>
 	public static VersionMonitor monitor;
+	public static AtomicInteger size;
 	/**
 	 * creates a {@link ActorThreadPool} which has nthreads. Note, threads
 	 * should not get started until calling to the {@link #start()} method.
@@ -38,26 +42,30 @@ public class ActorThreadPool {
 	 *            pool
 	 */
 	public ActorThreadPool(int nthreads) {
-		// TODO: replace method body with real implementation
+		size = new AtomicInteger(0);
 		this.actors= new HashMap<String,PrivateState>();
 		this.actions = new ConcurrentHashMap<String,OneAccessQueue<Action<?>>>();
 		this.threads = new ArrayList<Thread>();
 		monitor = new VersionMonitor();
-		this.isShutDown = new AtomicBoolean(true);
 		for(int i =0; i<nthreads; i++) {
 			this.threads.add(new Thread(()->{
-
-				while(this.isShutDown.get()) { //should be true until changed by the shutdown method
+				Thread thisThred = Thread.currentThread();
+				while(!thisThred.isInterrupted()) { //should be true until changed by the shutdown method
 					for (Map.Entry<String, OneAccessQueue<Action<?>>> entry : actions.entrySet()) {
 						if(entry.getValue().size() >0) {
 							if(entry.getValue().tryToLockDequeue()) {
-									Action action = entry.getValue().dequeue();
-									if(action==null) continue;
-									String actorId = entry.getKey();
-									PrivateState actorPrivateState = this.getPrivaetState(actorId);
-									actorPrivateState.addRecord(action.getActionName());
-									action.handle(this, actorId, actorPrivateState);
-									monitor.inc();
+									if(entry.getValue().size()==0) continue;
+									else {
+										Action action = entry.getValue().dequeue();
+										if(action==null) continue;
+										String actorId = entry.getKey();
+										PrivateState actorPrivateState = this.getPrivaetState(actorId);
+										actorPrivateState.addRecord(action.getActionName());
+										action.handle(this, actorId, actorPrivateState);
+										entry.getValue().freeFrontLock();
+										monitor.inc();
+										size.decrementAndGet();
+									}
 								}
 							}
 						}
@@ -66,7 +74,7 @@ public class ActorThreadPool {
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
-						}
+						}						
 
 				}
 				
@@ -130,12 +138,11 @@ public class ActorThreadPool {
 				actionQueue.enqueue(action);
 			}
 			DepartmentPrivateState depratmentPrivateState = new DepartmentPrivateState();
-			synchronized (depratmentPrivateState) {
-				this.actions.putIfAbsent(actorId, actionQueue);
-				this.actors.put(actorId, depratmentPrivateState);
+			this.actions.putIfAbsent(actorId, actionQueue);
+			this.actors.put(actorId, depratmentPrivateState);
 			}
+		size.incrementAndGet();
 		}
-	}
 		
 
 	/**
@@ -149,7 +156,6 @@ public class ActorThreadPool {
 	 *             if the thread that shut down the threads is interrupted
 	 */
 	public void shutdown() throws InterruptedException {
-			isShutDown.compareAndSet(true, false);
 			this.threads.forEach(thread->{thread.interrupt();});
 	}
 

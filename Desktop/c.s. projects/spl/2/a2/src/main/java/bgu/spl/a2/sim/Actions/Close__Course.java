@@ -56,7 +56,7 @@ public class Close__Course extends Action<Boolean> {
 					System.out.println("course was not closed");
 					}
 				this.complete(resualt);
-				Simulator.phaseActions.countDown();
+				
 			});
 		}
 		else {

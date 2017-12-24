@@ -61,7 +61,7 @@ public class Add_Student extends Action<Boolean> {
 				}
 			}else {System.out.println("student was not created");}
 			this.complete(resualt);
-			Simulator.phaseActions.countDown();
+			
 		});
 	}
 	

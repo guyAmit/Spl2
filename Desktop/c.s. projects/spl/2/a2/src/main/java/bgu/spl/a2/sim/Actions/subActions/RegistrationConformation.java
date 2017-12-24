@@ -48,7 +48,6 @@ public class RegistrationConformation extends Action<Boolean> {
 		if(((StudentPrivateState)this.actorState).meetRequirements(coursePrivateState.getPrequisites())) {
 			((StudentPrivateState)this.actorState).getGrades().put(courseId, grade);
 			this.complete(true);
-			this.coursePrivateState.register(this.actorId);
 		}
 		else
 			this.complete(false);

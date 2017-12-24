@@ -4,6 +4,7 @@
 package bgu.spl.a2.sim.Actions;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import bgu.spl.a2.Action;
 import bgu.spl.a2.sim.Simulator;
@@ -27,11 +28,12 @@ public class Participate_In_Course extends Action<Boolean> {
 	private String studendId;
 	private StudentPrivateState studentPrivateState;
 	private Integer grade;//optional
-	
+	private AtomicBoolean failed;
 	public Participate_In_Course(String studentId,int grade) {
 		this.studendId=studentId;
 		this.grade = new Integer(grade);
 		this.actionName="Particapate in course";
+		this.failed= new AtomicBoolean(false);
 	}
 	
 	public Participate_In_Course(String studentId) {
@@ -54,6 +56,7 @@ public class Participate_In_Course extends Action<Boolean> {
 		// TODO Auto-generated method stub
 		this.studentPrivateState = (StudentPrivateState)this.pool.getPrivaetState(this.studendId);
 		if(((CoursePrivateState)this.actorState).getAvailableSpots()>0) {
+			((CoursePrivateState)this.actorState).changeSpots(-1); //decreasing the spots, so other student wont be able to register
 			ArrayList<Action<Boolean>> subActions = new ArrayList<>();
 			RegistrationConformation conf;
 			if(this.grade==null)
@@ -66,18 +69,24 @@ public class Participate_In_Course extends Action<Boolean> {
 				//and also after the action will get back into his original
 				//queue
 				Boolean resualt = subActions.get(0).getResult().get();
+				if(resualt) {
+					((CoursePrivateState)this.actorState).changeSpots(1);
+					((CoursePrivateState)this.actorState).register(this.studendId);
+				}
+				else{
+					((CoursePrivateState)this.actorState).changeSpots(1);
+					System.out.println("registration failed");
+					}
 				this.complete(resualt);
-				if(!resualt) {System.out.println("registration failed");}
-				Simulator.phaseActions.countDown();
 			});
 			
 		}else {
 			this.complete(false);
-			Simulator.phaseActions.countDown();
 			System.out.println("no spots available");
 		}
 
-	}
+}
+
 	
 	@Override
 	public String toString() {

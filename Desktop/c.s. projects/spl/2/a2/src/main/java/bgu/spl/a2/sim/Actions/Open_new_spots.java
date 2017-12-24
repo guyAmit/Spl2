@@ -1,6 +1,7 @@
 package bgu.spl.a2.sim.Actions;
 
 import bgu.spl.a2.Action;
+import bgu.spl.a2.sim.Simulator;
 import bgu.spl.a2.sim.privateStates.CoursePrivateState;
 /**
  * 
@@ -36,11 +37,11 @@ public class Open_new_spots extends Action<Object> {
 	public void start() {
 		if(this.coursePrivateState!=null) {
 			if(this.coursePrivateState.getAvailableSpots()!=-1) {
-				this.coursePrivateState.addSpots(this.spaces);
+				this.coursePrivateState.changeSpots(this.spaces);
 			}
 			else {System.out.println("course is closed");}
 			}
-		else {System.out.println("course does not exists");}
+		else {System.out.println("course does not exists");}		
 		}
 	
 	@Override
