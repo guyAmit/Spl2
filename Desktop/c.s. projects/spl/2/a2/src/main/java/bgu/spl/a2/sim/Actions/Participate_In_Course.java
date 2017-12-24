@@ -75,17 +75,24 @@ public class Participate_In_Course extends Action<Boolean> {
 				//will be executed when all the SubActions will finish
 				//and also after the action will get back into his original
 				//queue
-				Boolean result = subActions.get(0).getResult().get();
-				((CoursePrivateState)this.actorState).changeSpots(1);
-				((CoursePrivateState)this.actorState).getRegStudents().remove(this.studendId);
-				//complete the registering proccess according to the result
-				if(result) 
-					((CoursePrivateState)this.actorState).register(this.studendId);
-				else
-					System.out.println("registration failed");
-				this.complete(result);
+				//TODO:hendle the concurrent close curse action
+				if(((CoursePrivateState)this.actorState).getAvailableSpots()!=-1) {
+					Boolean result = subActions.get(0).getResult().get();
+					((CoursePrivateState)this.actorState).changeSpots(1);
+					((CoursePrivateState)this.actorState).getRegStudents().remove(this.studendId);
+					//complete the registering proccess according to the result
+					if(result) 
+						((CoursePrivateState)this.actorState).register(this.studendId);
+					else
+						System.out.println("registration failed");
+					this.complete(result);
+				}
+				else {//course has been closed before before finished registering
+					this.complete(false);
+					//AvailableSpots and registered list should already be updated
+					//and the sub actions of the close course should have taken care of the student private state
+				}
 			});
-			
 		}else {
 			this.complete(false);
 			System.out.println("no spots available");

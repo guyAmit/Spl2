@@ -21,7 +21,7 @@ public class DepartmentPrivateState extends PrivateState{
 		courseList = new ArrayList<>();
 		studentList = new ArrayList<>();
 	}
-	public DepartmentPrivateState (List<String>courseList, List<String>studentList) {
+	public void SetPrivateState (List<String>courseList, List<String>studentList) {
 		this.courseList = courseList;
 		this.studentList = studentList;
 	}

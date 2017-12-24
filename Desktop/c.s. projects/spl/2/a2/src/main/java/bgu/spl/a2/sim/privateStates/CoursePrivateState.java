@@ -21,13 +21,13 @@ public class CoursePrivateState extends PrivateState{
 	 * this may cause automatic tests to fail..
 	 */
 	public CoursePrivateState() {
-		availableSpots = 100;
+		availableSpots = 0;
 		registered = 0;
 		regStudents = new ArrayList<>();
 		prequisites = new ArrayList<>();
 	}
 	
-	public CoursePrivateState(Integer availableSpots, Integer registered
+	public void SetPrivateState(Integer availableSpots, Integer registered
 			,List<String> regStudents,List <String> prequisites) {
 		this.availableSpots=availableSpots;
 		this.registered = registered;
@@ -71,15 +71,7 @@ public class CoursePrivateState extends PrivateState{
 			this.availableSpots+=spaces;
 	}
 	
-	/**
-	 * <h1>changeSpots</h1>
-	 * add a student to the registered list without</br>
-	 * effecting all the rest of the private state</br>
-	 * @param studentId
-	 */
-	public void AddToRegisteredlist(String studentId) {	 
-			this.regStudents.add(studentId);
-	}
+	
 	/**
 	 * <h1>register</h1>
 	 * assisting method for changing the private state</br>

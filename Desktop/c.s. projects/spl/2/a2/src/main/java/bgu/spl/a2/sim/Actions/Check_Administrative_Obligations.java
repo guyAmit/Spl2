@@ -5,6 +5,7 @@ import bgu.spl.a2.*;
 import bgu.spl.a2.Action;
 import bgu.spl.a2.sim.Computer;
 import bgu.spl.a2.sim.Simulator;
+import bgu.spl.a2.sim.Actions.subActions.CheckAndSignConformation;
 import bgu.spl.a2.sim.privateStates.StudentPrivateState;
 
 public class Check_Administrative_Obligations extends Action<Boolean> {
@@ -42,15 +43,21 @@ public class Check_Administrative_Obligations extends Action<Boolean> {
 	protected void start() {
 		this.studentsIds.forEach(student -> this.studentsPrivateStates.add((StudentPrivateState)this.pool.getPrivaetState(student)));
 		Promise<Computer> computerPromise = Simulator.wareHouse.acquireComputer(computerId);
-		
+		ArrayList<Action<Boolean>> subActions = new ArrayList<>();
 		//waiting to the action turn for the computer, and then doing the check and signs
 		computerPromise.subscribe(()->{
+			int i=0;
 			for (StudentPrivateState student : this.studentsPrivateStates) {
-				student.setSignature(computerPromise.get().checkAndSign(coursesIds, student.getGrades()));
+				CheckAndSignConformation conf = new CheckAndSignConformation(computerPromise.get().checkAndSign(coursesIds, student.getGrades()));
+				subActions.add(conf);
+				this.pool.submit(conf, studentsIds.get(i), student);
+				i++;
 			}
 			//freeing the computer.
-			Simulator.wareHouse.freeComputer(this.computerId);			
-			this.complete(true);
+			this.then(subActions, ()->{
+				Simulator.wareHouse.freeComputer(this.computerId);			
+				this.complete(true);
+			});
 		});
 	}
 	

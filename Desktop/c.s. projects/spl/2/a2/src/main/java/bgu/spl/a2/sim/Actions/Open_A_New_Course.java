@@ -33,8 +33,8 @@ public class Open_A_New_Course extends Action<Boolean> {
 		this.courseId=courseId;
 		this.spaces=spaces;
 		this.actionName="Open new course";
-		this.coursePrivateState = new CoursePrivateState(spaces,0,
-				new ArrayList<String>(),prequisites);
+		this.coursePrivateState = new CoursePrivateState();
+		this.coursePrivateState.SetPrivateState(spaces,0,new ArrayList<String>(),prequisites);
 	}
 	
 	

@@ -72,8 +72,8 @@ public class ActorThreadPool {
 						try {
 							monitor.await(monitor.getVersion());
 						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							Thread thisThread = Thread.currentThread();
+							thisThread.interrupt();
 						}						
 
 				}
