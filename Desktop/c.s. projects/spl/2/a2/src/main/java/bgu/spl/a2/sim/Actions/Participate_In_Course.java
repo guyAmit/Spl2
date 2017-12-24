@@ -56,7 +56,14 @@ public class Participate_In_Course extends Action<Boolean> {
 		// TODO Auto-generated method stub
 		this.studentPrivateState = (StudentPrivateState)this.pool.getPrivaetState(this.studendId);
 		if(((CoursePrivateState)this.actorState).getAvailableSpots()>0) {
-			((CoursePrivateState)this.actorState).changeSpots(-1); //decreasing the spots, so other student wont be able to register
+			/****Indicating that the registering is in proccses****
+			 *  --decreasing the spots, so other student wont be able to register
+			 *  --adding the student to the list, so other actions will 
+			 *  	know he is indeed in registering proccess
+			 */
+			((CoursePrivateState)this.actorState).changeSpots(-1); 
+			((CoursePrivateState)this.actorState).getRegStudents().add(this.studendId);
+			
 			ArrayList<Action<Boolean>> subActions = new ArrayList<>();
 			RegistrationConformation conf;
 			if(this.grade==null)
@@ -68,16 +75,15 @@ public class Participate_In_Course extends Action<Boolean> {
 				//will be executed when all the SubActions will finish
 				//and also after the action will get back into his original
 				//queue
-				Boolean resualt = subActions.get(0).getResult().get();
-				if(resualt) {
-					((CoursePrivateState)this.actorState).changeSpots(1);
+				Boolean result = subActions.get(0).getResult().get();
+				((CoursePrivateState)this.actorState).changeSpots(1);
+				((CoursePrivateState)this.actorState).getRegStudents().remove(this.studendId);
+				//complete the registering proccess according to the result
+				if(result) 
 					((CoursePrivateState)this.actorState).register(this.studendId);
-				}
-				else{
-					((CoursePrivateState)this.actorState).changeSpots(1);
+				else
 					System.out.println("registration failed");
-					}
-				this.complete(resualt);
+				this.complete(result);
 			});
 			
 		}else {

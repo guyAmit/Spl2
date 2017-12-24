@@ -62,17 +62,27 @@ public class CoursePrivateState extends PrivateState{
 	}
 	/**
 	 * <h1>changeSpots</h1>
-	 * change the number of spots in the course.
-	 * negative number for decreasing
-	 * Positive for increasing
+	 * change the number of spots in the course.</br>
+	 * negative number for decreasing</br>
+	 * Positive for increasing</br>
 	 * @param spaces
 	 */
 	public void changeSpots(int spaces) {	 
 			this.availableSpots+=spaces;
 	}
+	
+	/**
+	 * <h1>changeSpots</h1>
+	 * add a student to the registered list without</br>
+	 * effecting all the rest of the private state</br>
+	 * @param studentId
+	 */
+	public void AddToRegisteredlist(String studentId) {	 
+			this.regStudents.add(studentId);
+	}
 	/**
 	 * <h1>register</h1>
-	 * assisting method for changing the private state<br>
+	 * assisting method for changing the private state</br>
 	 * of the course when a student is trying to register
 	 * @param studentId
 	 */

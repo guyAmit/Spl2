@@ -67,7 +67,8 @@ public class VersionMonitor {
         	try {
         		this.wait();
         	}catch (InterruptedException e) {
-				// TODO: handle exception
+				Thread thisThread = Thread.currentThread();
+				thisThread.interrupt();
 			}
         }
     }

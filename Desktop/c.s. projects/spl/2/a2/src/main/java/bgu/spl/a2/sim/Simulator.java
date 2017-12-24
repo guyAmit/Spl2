@@ -40,7 +40,7 @@ public class Simulator {
 	private static final String Phase1="Phase 1";
 	private static final String Phase2="Phase 2";
 	private static final String Phase3="Phase 3";
-
+	private static final Long SleepingTime = (long) 50;
 
 	public static ActorThreadPool actorThreadPool;
 	public static Warehouse wareHouse;
@@ -56,16 +56,34 @@ public class Simulator {
 			initPhaseActions((JSONObject)jObj,Phase1);
 			actorThreadPool.start();
 			while(ActorThreadPool.size.get()!=0) {
+				try {
+					Thread.sleep(SleepingTime);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			
 			initPhaseActions((JSONObject)jObj,Phase2);
 			ActorThreadPool.monitor.inc();
 			while(ActorThreadPool.size.get()!=0) {
+				try {
+					Thread.sleep(SleepingTime);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			
 			initPhaseActions((JSONObject)jObj,Phase3);
 			ActorThreadPool.monitor.inc();
 			while(ActorThreadPool.size.get()!=0) {
+				try {
+					Thread.sleep(SleepingTime);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 		

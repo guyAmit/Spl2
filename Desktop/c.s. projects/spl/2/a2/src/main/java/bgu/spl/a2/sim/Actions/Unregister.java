@@ -42,12 +42,12 @@ public class Unregister extends Action<Boolean> {
 	protected void start() {
 		this.studentPrivateState = (StudentPrivateState)this.pool.getActors().get(this.studentId);
 		if(((CoursePrivateState)this.actorState).getRegStudents().contains(studentId)) {
-			if(((CoursePrivateState)this.actorState).getAvailableSpots()>0) {
+			if(((CoursePrivateState)this.actorState).getAvailableSpots()>0) { //making sure that the course is not closed
 				ArrayList<Action<Boolean>> subActions = new ArrayList<>();
 				//sending a sub action to the student actor to remove him self from this course
 				UnRegistrationConformation conf = new UnRegistrationConformation(this.actorId);
-				this.pool.submit(conf,this.studentId, studentPrivateState);
 				subActions.add(conf);
+				this.pool.submit(conf,this.studentId, studentPrivateState);
 				this.then(subActions, ()->{
 					//will be executed when all the SubActions will finish
 					//and also after the action will get back into his original
