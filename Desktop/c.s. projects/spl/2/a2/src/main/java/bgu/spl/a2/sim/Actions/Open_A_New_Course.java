@@ -51,6 +51,7 @@ public class Open_A_New_Course extends Action<Boolean> {
 	protected void start() {
 		ArrayList<Action<Boolean>> subActions = new ArrayList<>();
 		//sending a sub action to the course actor to make sure that he was indeed created
+		this.pool.getActors().put(this.courseId, this.coursePrivateState);
 		ConformationAction conf = new ConformationAction();
 		this.pool.submit(conf, this.courseId, this.coursePrivateState );
 		subActions.add((Action<Boolean>) conf);

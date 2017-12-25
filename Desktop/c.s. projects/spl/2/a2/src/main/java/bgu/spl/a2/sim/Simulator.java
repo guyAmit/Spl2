@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -63,7 +64,6 @@ public class Simulator {
 					e.printStackTrace();
 				}
 			}
-			
 			initPhaseActions((JSONObject)jObj,Phase2);
 			ActorThreadPool.monitor.inc();
 			while(ActorThreadPool.size.get()!=0) {
@@ -91,6 +91,7 @@ public class Simulator {
 		try {
 			simulator.join();
 			end();
+			simulator.interrupt();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -114,8 +115,8 @@ public class Simulator {
 		try {
 			actorThreadPool.shutdown();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Thread thisThread = Thread.currentThread();
+			thisThread.interrupt();
 		}
 		try {
 			FileOutputStream outStram = new FileOutputStream("result.ser");
@@ -128,7 +129,9 @@ public class Simulator {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return (HashMap<String, PrivateState>) actorThreadPool.getActors();
+		HashMap<String, PrivateState> returnMap = new HashMap<>();
+		returnMap.putAll(actorThreadPool.getActors());
+		return returnMap;
 	}
 	
 	

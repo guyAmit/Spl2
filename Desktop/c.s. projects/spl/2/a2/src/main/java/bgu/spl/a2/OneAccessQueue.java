@@ -4,6 +4,7 @@
 package bgu.spl.a2;
 
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.*;
 /**
  * @author Guy-Amit
@@ -14,18 +15,23 @@ public class OneAccessQueue<E> extends LinkedList<E>{
 	
 	private AtomicBoolean frontLock;
 	private AtomicBoolean backLock;
+	private AtomicInteger length;
 	
 	public OneAccessQueue(){
 		super();
 		this.frontLock = new AtomicBoolean(true);
 		this.backLock = new AtomicBoolean(true);
+		this.length = new AtomicInteger(0);
 	}
 	
 	
 	/**
-	 * <h1>getName</h1>
-	 * @return the {@link #name} of the queue
+	 * <h1>getSize</h1>
+	 * @return the {@link #length} of the queue, this is a concurrent method
 	 */
+	public int getSize() {
+		return this.length.get();
+	}
 	
 	
 	/**
@@ -60,6 +66,7 @@ public class OneAccessQueue<E> extends LinkedList<E>{
 		try {
 			if(!this.backLock.get()) {
 				super.addLast(e);
+				this.length.incrementAndGet();
 				this.backLock.compareAndSet(false, true);
 				return true;
 			}
@@ -79,8 +86,12 @@ public class OneAccessQueue<E> extends LinkedList<E>{
 	 */
 	public E dequeue() {
 		if(!this.frontLock.get()) {
-			if(super.size()>0) {
-				E returnVal = super.removeFirst();
+			if(this.length.get()>0) {
+				E returnVal=null;
+				try {
+					returnVal = super.removeFirst();
+				}catch(NoSuchElementException e) {}
+				this.length.decrementAndGet();
 				return returnVal;
 			}
 			return null;

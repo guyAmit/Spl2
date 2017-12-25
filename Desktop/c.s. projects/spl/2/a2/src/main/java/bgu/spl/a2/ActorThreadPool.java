@@ -43,7 +43,7 @@ public class ActorThreadPool {
 	 */
 	public ActorThreadPool(int nthreads) {
 		size = new AtomicInteger(0);
-		this.actors= new HashMap<String,PrivateState>();
+		this.actors= new ConcurrentHashMap<String,PrivateState>();
 		this.actions = new ConcurrentHashMap<String,OneAccessQueue<Action<?>>>();
 		this.threads = new ArrayList<Thread>();
 		monitor = new VersionMonitor();
@@ -52,9 +52,10 @@ public class ActorThreadPool {
 				Thread thisThred = Thread.currentThread();
 				while(!thisThred.isInterrupted()) { //should be true until changed by the shutdown method
 					for (Map.Entry<String, OneAccessQueue<Action<?>>> entry : actions.entrySet()) {
-						if(entry.getValue().size() >0) {
+						if(entry.getValue().getSize() >0) {
+							if(thisThred.isInterrupted()) break;
 							if(entry.getValue().tryToLockDequeue()) {
-									if(entry.getValue().size()==0) continue;
+									if(entry.getValue().getSize()==0) continue;
 									else {
 										Action action = entry.getValue().dequeue();
 										if(action==null) continue;
@@ -128,7 +129,6 @@ public class ActorThreadPool {
 				actionQueue.enqueue(action);
 			}
 			this.actions.putIfAbsent(actorId, actionQueue);
-			this.actors.put(actorId,actorState);
 		}
 		else { //creating a new department, and putting the action into it
 			actionQueue = new OneAccessQueue<Action<?>>();

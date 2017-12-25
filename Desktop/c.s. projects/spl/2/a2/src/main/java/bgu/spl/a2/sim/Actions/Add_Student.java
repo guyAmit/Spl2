@@ -46,6 +46,7 @@ public class Add_Student extends Action<Boolean> {
 	protected void start() {
 		ArrayList<Action<Boolean>> subActions = new ArrayList<>();
 		//sending a sub action to the student actor to check that he was indeed created
+		this.pool.getActors().put(this.studentId, this.studentPrivateState);
 		ConformationAction conf = new ConformationAction();
 		this.pool.submit(conf, studentId, studentPrivateState);
 		subActions.add((Action<Boolean>) conf);
@@ -56,9 +57,7 @@ public class Add_Student extends Action<Boolean> {
 			Boolean resualt = subActions.get(0).getResult().get();
 			if(resualt) {
 				List<String> registeredStudents = ((DepartmentPrivateState)this.actorState).getStudentList();
-				synchronized (registeredStudents) {
-					registeredStudents.add(this.studentId);
-				}
+				registeredStudents.add(this.studentId);
 			}else {System.out.println("student was not created");}
 			this.complete(resualt);			
 		});
