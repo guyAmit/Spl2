@@ -20,6 +20,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.management.monitor.Monitor;
+
 import bgu.spl.a2.Action;
 import bgu.spl.a2.ActorThreadPool;
 import bgu.spl.a2.PrivateState;
@@ -52,8 +54,6 @@ public class Simulator {
 	* Begin the simulation Should not be called before attachActorThreadPool()
 	*/
     public static void start(){
-		simulator = new Thread(()->{
-			
 			initPhaseActions((JSONObject)jObj,Phase1);
 			actorThreadPool.start();
 			while(ActorThreadPool.size.get()!=0) {
@@ -85,16 +85,7 @@ public class Simulator {
 					e.printStackTrace();
 				}
 			}
-		});
-		
-		simulator.start();
-		try {
-			simulator.join();
-			end();
-			simulator.interrupt();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		end();
     }
 	
 	/**

@@ -109,8 +109,6 @@ public class Promise<T>{
 		else {
 			if(!this.callbacks.contains(callback))
 				this.callbacks.add(callback);
-			else
-				throw new RuntimeException();
 		}
 	}
 }

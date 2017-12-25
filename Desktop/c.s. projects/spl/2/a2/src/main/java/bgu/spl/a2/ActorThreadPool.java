@@ -49,11 +49,11 @@ public class ActorThreadPool {
 		monitor = new VersionMonitor();
 		for(int i =0; i<nthreads; i++) {
 			this.threads.add(new Thread(()->{
-				Thread thisThred = Thread.currentThread();
-				while(!thisThred.isInterrupted()) { //should be true until changed by the shutdown method
+				Thread thisThread = Thread.currentThread();
+				while(!thisThread.isInterrupted()) { //should be true until changed by the shutdown method
 					for (Map.Entry<String, OneAccessQueue<Action<?>>> entry : actions.entrySet()) {
 						if(entry.getValue().getSize() >0) {
-							if(thisThred.isInterrupted()) break;
+							if(thisThread.isInterrupted()) break;
 							if(entry.getValue().tryToLockDequeue()) {
 									if(entry.getValue().getSize()==0) continue;
 									else {
@@ -66,18 +66,15 @@ public class ActorThreadPool {
 										monitor.inc();
 										size.decrementAndGet();
 									}
-								}
 							}
+						}
 						}
 						try {
 							monitor.await(monitor.getVersion());
 						} catch (InterruptedException e) {
-							Thread thisThread = Thread.currentThread();
 							thisThread.interrupt();
 						}						
-
 				}
-				
 			}));
 		}
 	}	  
@@ -156,6 +153,7 @@ public class ActorThreadPool {
 	 */
 	public void shutdown() throws InterruptedException {
 			this.threads.forEach(thread->{thread.interrupt();});
+			monitor.inc();
 	}
 
 	/**
