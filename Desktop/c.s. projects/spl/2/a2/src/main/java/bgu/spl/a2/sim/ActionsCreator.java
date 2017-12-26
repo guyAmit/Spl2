@@ -28,6 +28,10 @@ public class ActionsCreator {
 		String departmentId=jsonEntry.get("Department").toString();
 		Add_Student addStudentAction = new Add_Student(studentId);
 		DepartmentPrivateState departmentPrivateState = (DepartmentPrivateState)actorThreadPool.getActors().get(departmentId);
+		if(departmentPrivateState==null)
+		{departmentPrivateState = new DepartmentPrivateState();
+			actorThreadPool.getActors().putIfAbsent(departmentId, departmentPrivateState);
+		}		
 		actorThreadPool.submit(addStudentAction, departmentId, departmentPrivateState);
 	}
 	
@@ -39,6 +43,10 @@ public class ActionsCreator {
 		ArrayList<String> prequisites  = new ArrayList<>();
 		PrerequisitesJson.forEach(pre ->{prequisites.add((String)pre);});
 		DepartmentPrivateState departmentPrivateState = (DepartmentPrivateState)actorThreadPool.getPrivaetState(departmentId);
+		if(departmentPrivateState==null)
+		{departmentPrivateState = new DepartmentPrivateState();
+			actorThreadPool.getActors().putIfAbsent(departmentId, departmentPrivateState);
+		}
 		Open_A_New_Course openCourseAction = new Open_A_New_Course(courseId, spaces, prequisites);
 		actorThreadPool.submit(openCourseAction, departmentId,departmentPrivateState);
 	}

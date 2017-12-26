@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package bgu.spl.a2.sim;
 import java.util.HashMap;
 import java.io.FileNotFoundException;
@@ -13,6 +7,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,6 +16,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.management.monitor.Monitor;
+import javax.rmi.CORBA.Util;
 
 import bgu.spl.a2.Action;
 import bgu.spl.a2.ActorThreadPool;
@@ -110,9 +106,12 @@ public class Simulator {
 			thisThread.interrupt();
 		}
 		try {
+			HashMap<String, PrivateState> returnMap = new HashMap<>();
+			for(Map.Entry<String, PrivateState> entry : actorThreadPool.getActors().entrySet())
+				returnMap.put(entry.getKey(), entry.getValue());
 			FileOutputStream outStram = new FileOutputStream("result.ser");
 			ObjectOutputStream oos = new ObjectOutputStream(outStram);
-			oos.writeObject(actorThreadPool.getActors());
+			oos.writeObject(returnMap);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -120,9 +119,7 @@ public class Simulator {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		HashMap<String, PrivateState> returnMap = new HashMap<>();
-		returnMap.putAll(actorThreadPool.getActors());
-		return returnMap;
+		return null;
 	}
 	
 	
@@ -220,9 +217,9 @@ public class Simulator {
         	e.printStackTrace();
         }
 		start();
-		Set<String> actors = actorThreadPool.getActors().keySet();
-		actors.forEach(actor->{
-			System.out.println(actor+":\n"+actorThreadPool.getPrivaetState(actor)+"\n");
-		});
+//		Set<String> actors = actorThreadPool.getActors().keySet();
+//		actors.forEach(actor->{
+//			System.out.println(actor+":\n"+actorThreadPool.getPrivaetState(actor)+"\n");
+//		});
 	}
 }

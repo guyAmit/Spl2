@@ -4,6 +4,8 @@ package bgu.spl.a2;
  */
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.management.monitor.Monitor;
+
 /**
  * Describes a monitor that supports the concept of versioning - its idea is
  * simple, the monitor has a version number which you can receive via the method
@@ -54,7 +56,7 @@ public class VersionMonitor {
 
 	/**
 	 *<h1>await</h1>
-	 *<p>blocking the thread that is using to monitor till the version changes<br>
+	 *<p>blocking the thread that is using the monitor till the version changes<br>
 	 *<h2>sync exp:</h2>
 	 * we will sync on this, i.e. the VersionMonitor instance<br>
 	 * in order to block the thread</p>
@@ -62,7 +64,7 @@ public class VersionMonitor {
 	 * @Inv some other thread will notify this thread to wake up using the {@link #inc()} method
 	 * @throws InterruptedException
 	 */
-    synchronized public void await(int version) throws InterruptedException {
+     public synchronized void await(int version) throws InterruptedException {
         while(this.getVersion()==version) {
         	try {
         		this.wait();

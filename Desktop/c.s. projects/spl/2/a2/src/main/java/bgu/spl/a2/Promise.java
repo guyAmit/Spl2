@@ -73,18 +73,17 @@ public class Promise<T>{
 	 * @param value
 	 *            - the value to resolve this promise object with
 	 */
-	public void resolve(T value){
+	public synchronized void resolve(T value){
 		if(this.isResolved.get()) 
 			throw new IllegalStateException("promise is not resloved yet");//already resolved maby mistake?
 		else {
 			this.isResolved.compareAndSet(false, true);
 			this.resualt=value;
-			synchronized (callbacks) {
 				for (callback callback : callbacks) {
 					callback.call();
 				}
 				this.callbacks.clear();
-			}
+			
 		}
 	}
 
@@ -101,7 +100,7 @@ public class Promise<T>{
 	 * @param callback
 	 *            the callback to be called when the promise object is resolved
 	 */
-	public void subscribe(callback callback) {
+	public synchronized void subscribe(callback callback) {
 		if(this.isResolved()) {
 			callback.call();
 			callback=null;

@@ -25,7 +25,7 @@ public class Check_Administrative_Obligations extends Action<Boolean> {
 	private ArrayList<String> studentsIds;
 	
 	public Check_Administrative_Obligations(ArrayList<String> coursesToCheck,ArrayList<String> studentsIds,String computerId) {
-		this.actionName="Check administrative obligations";
+		this.actionName="Administrative Check";
 		this.studentsPrivateStates = new ArrayList<>();
 		this.computerId=computerId;
 		this.studentsIds=studentsIds;
@@ -55,8 +55,7 @@ public class Check_Administrative_Obligations extends Action<Boolean> {
 			}
 			//freeing the computer.
 			this.then(subActions, ()->{
-				Simulator.wareHouse.freeComputer(this.computerId);			
-				this.complete(true);
+				Simulator.wareHouse.freeComputer(this.computerId);
 			});
 		});
 		this.actorState.addRecord(actionName);

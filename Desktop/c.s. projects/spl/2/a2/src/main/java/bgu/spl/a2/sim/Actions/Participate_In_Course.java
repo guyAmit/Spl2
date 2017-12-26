@@ -32,7 +32,7 @@ public class Participate_In_Course extends Action<Boolean> {
 	public Participate_In_Course(String studentId,int grade) {
 		this.studendId=studentId;
 		this.grade = new Integer(grade);
-		this.actionName="Particapate in course";
+		this.actionName="Participate In Course";
 		this.failed= new AtomicBoolean(false);
 	}
 	
@@ -83,8 +83,6 @@ public class Participate_In_Course extends Action<Boolean> {
 					//complete the registering proccess according to the result
 					if(result) 
 						((CoursePrivateState)this.actorState).register(this.studendId);
-					else
-						System.out.println("registration failed");
 					this.complete(result);
 				}
 				else {//course has been closed before before finished registering
@@ -95,7 +93,6 @@ public class Participate_In_Course extends Action<Boolean> {
 			});
 		}else {
 			this.complete(false);
-			System.out.println("registration failed");
 		}
 		this.actorState.addRecord(actionName);
 }

@@ -17,7 +17,7 @@ public class ConformationAction extends Action<Boolean> {
 	
 	@Override
 	public void start() {	
-		complete(true);
+		this.complete(true);
 	}
 	
 	@Override
