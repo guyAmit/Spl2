@@ -23,6 +23,8 @@ import bgu.spl.a2.ActorThreadPool;
 import bgu.spl.a2.PrivateState;
 import bgu.spl.a2.sim.Actions.Add_Student;
 import bgu.spl.a2.sim.Actions.Open_A_New_Course;
+import bgu.spl.a2.sim.Actions.Participate_In_Course;
+import bgu.spl.a2.sim.Actions.Register_With_Preferences;
 import bgu.spl.a2.sim.privateStates.DepartmentPrivateState;
 import bgu.spl.a2.sim.ActionsCreator;
 import org.json.simple.*;
@@ -39,47 +41,40 @@ public class Simulator {
 	private static final String Phase1="Phase 1";
 	private static final String Phase2="Phase 2";
 	private static final String Phase3="Phase 3";
-	private static final Long SleepingTime = (long) 50;
-
+	private static final Long Sleep = (long) 500;
 	public static ActorThreadPool actorThreadPool;
 	public static Warehouse wareHouse;
-	public static CountDownLatch phaseActions;
-	public static Thread simulator;
 	public static Object jObj;
+	public static CountDownLatch Actioncounter;
+	
 	/**
 	* Begin the simulation Should not be called before attachActorThreadPool()
+	 * @throws InterruptedException 
 	*/
-    public static void start(){
+    public static void start() throws InterruptedException{
 			initPhaseActions((JSONObject)jObj,Phase1);
 			actorThreadPool.start();
-			while(ActorThreadPool.size.get()!=0) {
-				try {
-					Thread.sleep(SleepingTime);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			try {
+				Actioncounter.await();
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
 			initPhaseActions((JSONObject)jObj,Phase2);
 			ActorThreadPool.monitor.inc();
-			while(ActorThreadPool.size.get()!=0) {
-				try {
-					Thread.sleep(SleepingTime);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			try {
+				Actioncounter.await();
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
-			
 			initPhaseActions((JSONObject)jObj,Phase3);
 			ActorThreadPool.monitor.inc();
-			while(ActorThreadPool.size.get()!=0) {
-				try {
-					Thread.sleep(SleepingTime);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			try {
+				Actioncounter.await();
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
 		end();
     }
@@ -112,6 +107,8 @@ public class Simulator {
 			FileOutputStream outStram = new FileOutputStream("result.ser");
 			ObjectOutputStream oos = new ObjectOutputStream(outStram);
 			oos.writeObject(returnMap);
+			oos.close();
+			outStram.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -170,6 +167,7 @@ public class Simulator {
 	@SuppressWarnings("unchecked")
 	public static void initPhaseActions(JSONObject obj,String phase) {
 		JSONArray PhaseActionsArray = (JSONArray)obj.get(phase);
+		Actioncounter = new CountDownLatch(PhaseActionsArray.size());
 		PhaseActionsArray.forEach(entry -> {
 			String type = ((JSONObject)entry).get("Action").toString();
 			if(type.compareTo("Add Student")==0) {//#done
@@ -216,10 +214,11 @@ public class Simulator {
         }catch(ParseException e) {
         	e.printStackTrace();
         }
-		start();
-//		Set<String> actors = actorThreadPool.getActors().keySet();
-//		actors.forEach(actor->{
-//			System.out.println(actor+":\n"+actorThreadPool.getPrivaetState(actor)+"\n");
-//		});
+		try {
+			start();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

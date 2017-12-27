@@ -57,7 +57,7 @@ public class Unregister extends Action<Boolean> {
 						((CoursePrivateState)this.actorState).unRegister(this.studentId);
 					}
 					else {System.out.println("unregistration failed");}
-					this.complete(resualt);					
+					this.complete(resualt);
 				});
 				
 		}

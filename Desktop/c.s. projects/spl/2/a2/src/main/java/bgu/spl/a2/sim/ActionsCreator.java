@@ -27,10 +27,11 @@ public class ActionsCreator {
 		String studentId=jsonEntry.get("Student").toString();
 		String departmentId=jsonEntry.get("Department").toString();
 		Add_Student addStudentAction = new Add_Student(studentId);
+		addStudentAction.getResult().subscribe(()->{Simulator.Actioncounter.countDown();});
 		DepartmentPrivateState departmentPrivateState = (DepartmentPrivateState)actorThreadPool.getActors().get(departmentId);
 		if(departmentPrivateState==null)
 		{departmentPrivateState = new DepartmentPrivateState();
-			actorThreadPool.getActors().putIfAbsent(departmentId, departmentPrivateState);
+			actorThreadPool.getActors().put(departmentId, departmentPrivateState);
 		}		
 		actorThreadPool.submit(addStudentAction, departmentId, departmentPrivateState);
 	}
@@ -45,9 +46,10 @@ public class ActionsCreator {
 		DepartmentPrivateState departmentPrivateState = (DepartmentPrivateState)actorThreadPool.getPrivaetState(departmentId);
 		if(departmentPrivateState==null)
 		{departmentPrivateState = new DepartmentPrivateState();
-			actorThreadPool.getActors().putIfAbsent(departmentId, departmentPrivateState);
+			actorThreadPool.getActors().put(departmentId, departmentPrivateState);
 		}
 		Open_A_New_Course openCourseAction = new Open_A_New_Course(courseId, spaces, prequisites);
+		openCourseAction.getResult().subscribe(()->{Simulator.Actioncounter.countDown();});
 		actorThreadPool.submit(openCourseAction, departmentId,departmentPrivateState);
 	}
 	
@@ -67,6 +69,7 @@ public class ActionsCreator {
 		else{
 			participateInCourseAction = new Participate_In_Course(studentId);
 		}
+		participateInCourseAction.getResult().subscribe(()->{Simulator.Actioncounter.countDown();});
 		actorThreadPool.submit(participateInCourseAction, courseId, coursePrivateState);
 	}
 	
@@ -86,6 +89,7 @@ public class ActionsCreator {
 		else{
 			registerWithPrefernceAction = new Register_With_Preferences(preferences);
 		}
+		registerWithPrefernceAction.getResult().subscribe(()->{Simulator.Actioncounter.countDown();});
 		actorThreadPool.submit(registerWithPrefernceAction, studentId, studentPrivateState);
 	}
 	
@@ -94,6 +98,7 @@ public class ActionsCreator {
 		String courseId = jsonEntry.get("Course").toString();
 		CoursePrivateState coursePrivateState =(CoursePrivateState)actorThreadPool.getPrivaetState(courseId);
 		Unregister unRegisterAction= new Unregister(studentId);
+		unRegisterAction.getResult().subscribe(()->{Simulator.Actioncounter.countDown();});
 		actorThreadPool.submit(unRegisterAction, courseId, coursePrivateState);
 	}
 	
@@ -101,6 +106,7 @@ public class ActionsCreator {
 		String courseId= jsonEntry.get("Course").toString();
 		String departmentId=jsonEntry.get("Department").toString();
 		Close__Course closeCourseAction = new Close__Course(courseId);
+		closeCourseAction.getResult().subscribe(()->{Simulator.Actioncounter.countDown();});
 		DepartmentPrivateState departmentPrivateState = (DepartmentPrivateState)actorThreadPool.getPrivaetState(departmentId);
 		actorThreadPool.submit(closeCourseAction, departmentId, departmentPrivateState);
 	}
@@ -110,6 +116,7 @@ public class ActionsCreator {
 		CoursePrivateState coursePrivateState =(CoursePrivateState)actorThreadPool.getPrivaetState(courseId);
 		Integer spaces = (Integer)jsonEntry.get("Number");
 		Open_new_spots openNewSpotsAction = new Open_new_spots(courseId, spaces);
+		openNewSpotsAction.getResult().subscribe(()->{Simulator.Actioncounter.countDown();});
 		actorThreadPool.submit(openNewSpotsAction, courseId, coursePrivateState);
 	}
 	
@@ -124,6 +131,7 @@ public class ActionsCreator {
 		ArrayList<String> coursesIds  = new ArrayList<>();
 		coursesJson.forEach(course ->{coursesIds.add((String)course);});
 		Check_Administrative_Obligations checkAdministrativeObligationsAction = new Check_Administrative_Obligations(coursesIds, studentsIds, computerId);
+		checkAdministrativeObligationsAction.getResult().subscribe(()->{Simulator.Actioncounter.countDown();});
 		DepartmentPrivateState departmentPrivateState = (DepartmentPrivateState)actorThreadPool.getPrivaetState(departmentId);
 		actorThreadPool.submit(checkAdministrativeObligationsAction, departmentId, departmentPrivateState);
 	}

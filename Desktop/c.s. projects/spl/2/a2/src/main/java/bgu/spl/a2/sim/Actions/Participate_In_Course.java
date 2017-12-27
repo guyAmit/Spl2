@@ -54,8 +54,13 @@ public class Participate_In_Course extends Action<Boolean> {
 	@Override
 	protected void start() {
 		// TODO Auto-generated method stub
-		this.studentPrivateState = (StudentPrivateState)this.pool.getPrivaetState(this.studendId);
-		if(((CoursePrivateState)this.actorState).getAvailableSpots()>0 & this.studentPrivateState.meetRequirements(((CoursePrivateState)this.actorState).getPrequisites())) {
+		do {
+			this.studentPrivateState = (StudentPrivateState)this.pool.getPrivaetState(this.studendId);
+		}
+		while(this.studentPrivateState==null);
+		
+		if(((CoursePrivateState)this.actorState).getAvailableSpots()>0 &
+				this.studentPrivateState.meetRequirements(((CoursePrivateState)this.actorState).getPrequisites())) {
 			/****Indicating that the registering is in proccses****
 			 *  --decreasing the spots, so other student wont be able to register
 			 *  --adding the student to the list, so other actions will 
@@ -89,7 +94,7 @@ public class Participate_In_Course extends Action<Boolean> {
 					this.complete(false);
 					//AvailableSpots and registered list should already be updated
 					//and the sub actions of the close course should have taken care of the student private state
-				}
+				};		
 			});
 		}else {
 			this.complete(false);

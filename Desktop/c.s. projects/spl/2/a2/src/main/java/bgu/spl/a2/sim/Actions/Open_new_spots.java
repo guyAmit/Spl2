@@ -41,7 +41,8 @@ public class Open_new_spots extends Action<Object> {
 			}
 			else {System.out.println("course is closed");}
 			}
-		else {System.out.println("course does not exists");}	
+		else {System.out.println("course does not exists");}
+		this.complete(true);
 		this.actorState.addRecord(actionName);
 		}
 	

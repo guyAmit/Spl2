@@ -29,6 +29,7 @@ public class ActorThreadPool {
 	private Map<String,OneAccessQueue<Action<?>>> actions; // <actorID,actionQueue>
 	public static VersionMonitor monitor;
 	public static AtomicInteger size;
+	private AtomicBoolean shotDown;
 	/**
 	 * creates a {@link ActorThreadPool} which has nthreads. Note, threads
 	 * should not get started until calling to the {@link #start()} method.
@@ -43,6 +44,7 @@ public class ActorThreadPool {
 	 */
 	public ActorThreadPool(int nthreads) {
 		size = new AtomicInteger(0);
+		this.shotDown=new AtomicBoolean(false);
 		this.actors= new ConcurrentHashMap<String,PrivateState>();
 		this.actions = new ConcurrentHashMap<String,OneAccessQueue<Action<?>>>();
 		this.threads = new ArrayList<Thread>();
@@ -52,32 +54,55 @@ public class ActorThreadPool {
 				Thread thisThread = Thread.currentThread();
 				while(!thisThread.isInterrupted()) { //should be true until changed by the shutdown method
 					for (Map.Entry<String, OneAccessQueue<Action<?>>> entry : actions.entrySet()) {
+						if(thisThread.isInterrupted()) break;
 						if(entry.getValue().getSize() >0) {
-							if(thisThread.isInterrupted()) break;
 							if(entry.getValue().tryToLockDequeue()) {
-									if(entry.getValue().getSize()==0) continue;
+									if(entry.getValue().getSize()==0) {
+										entry.getValue().freeFrontLock();										
+										continue;
+									}
 									else {
+										if(this.shotDown.get()) {entry.getValue().freeFrontLock(); break;}
 										Action action = entry.getValue().dequeue();
-										if(action==null) continue;
+										if(action==null) {entry.getValue().freeFrontLock(); continue;}
 										String actorId = entry.getKey();
 										PrivateState actorPrivateState = this.getPrivaetState(actorId);
-										action.handle(this, actorId, actorPrivateState);
-										entry.getValue().freeFrontLock();
-										monitor.inc();
 										size.decrementAndGet();
+										action.handle(this, actorId, actorPrivateState);
+										System.out.println(Simulator.Actioncounter.getCount());
+										System.out.println(size.get());
+										monitor.inc();
 									}
+									entry.getValue().freeFrontLock();										
 							}
+							
 						}
 						}
 						try {
-							monitor.await(monitor.getVersion());
+							if(!this.shotDown.get() && !this.ifAllNotSleeping())
+								monitor.await(monitor.getVersion());
 						} catch (InterruptedException e) {
 							thisThread.interrupt();
 						}						
 				}
 			}));
 		}
-	}	  
+	}	
+	
+	
+	/**
+	 * <h1>ifAllSleeping</h1>
+	 * checks if all other the threads are not waiting
+	 */
+	private boolean ifAllNotSleeping() {
+		Thread thisThread =Thread.currentThread();
+		for (Thread thread : threads) {
+			if(!thread.equals(thisThread) && thread.getState()!=Thread.State.WAITING) {
+				return true;
+			}
+		}
+		return false;
+	}
 		  
 	/**
 	 * getter for actors
@@ -125,7 +150,7 @@ public class ActorThreadPool {
 				actionQueue.tryToLockEnqueue();
 				actionQueue.enqueue(action);
 			}
-			this.actions.putIfAbsent(actorId, actionQueue);
+			this.actions.put(actorId, actionQueue);
 		}
 		else { //creating a new department, and putting the action into it
 			actionQueue = new OneAccessQueue<Action<?>>();
@@ -134,7 +159,7 @@ public class ActorThreadPool {
 				actionQueue.enqueue(action);
 			}
 			DepartmentPrivateState depratmentPrivateState = new DepartmentPrivateState();
-			this.actions.putIfAbsent(actorId, actionQueue);
+			this.actions.put(actorId, actionQueue);
 			this.actors.put(actorId, depratmentPrivateState);
 			}
 		size.incrementAndGet();
@@ -152,8 +177,14 @@ public class ActorThreadPool {
 	 *             if the thread that shut down the threads is interrupted
 	 */
 	public void shutdown() throws InterruptedException {
-			this.threads.forEach(thread->{thread.interrupt();});
-			monitor.inc();
+		this.shotDown.set(true);
+		synchronized (this.threads) {
+		this.threads.forEach(thread->{thread.interrupt();});
+		}
+		monitor.inc();
+		synchronized (this) {
+			this.notifyAll();
+		}
 	}
 
 	/**

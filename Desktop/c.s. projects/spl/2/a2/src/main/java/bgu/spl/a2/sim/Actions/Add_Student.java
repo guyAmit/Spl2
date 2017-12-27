@@ -59,6 +59,7 @@ public class Add_Student extends Action<Boolean> {
 				List<String> registeredStudents = ((DepartmentPrivateState)this.actorState).getStudentList();
 				registeredStudents.add(this.studentId);
 			}else {System.out.println("student was not created");}
+			
 			this.complete(resualt);			
 		});
 		this.actorState.addRecord(actionName);

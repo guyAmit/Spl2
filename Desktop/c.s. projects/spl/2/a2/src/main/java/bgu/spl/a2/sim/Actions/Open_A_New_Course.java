@@ -64,7 +64,8 @@ public class Open_A_New_Course extends Action<Boolean> {
 			if(resualt) {
 				coursesIds.add(this.courseId);
 				}
-			else {System.out.println("student was not created");}			
+			else {System.out.println("student was not created");}
+			
 			this.complete(resualt);
 		});
 		this.actorState.addRecord(actionName);

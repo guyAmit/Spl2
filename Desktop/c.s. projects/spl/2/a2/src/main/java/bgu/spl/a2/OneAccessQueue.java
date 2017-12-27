@@ -132,21 +132,20 @@ public class OneAccessQueue<E> extends LinkedList<E>{
 	
 	/**
 	 * <h1>freeBackLock</h1>
-	 * try to free the back lock
+	 * free the back lock
 	 * @return true if the operation was a success
 	 */
-	public boolean freeBackLock() {
-		return this.backLock.compareAndSet(false, true);
+	public void freeBackLock() {
+		this.backLock.set(true);
 	}
 	
 	
 	/**
 	 * <h1>freeFrontLock</h1>
-	 * try to free the front lock
-	 * @return true if the operation was a success
+	 *  free the front lock
 	 */
-	public boolean freeFrontLock() {
-		return this.frontLock.compareAndSet(false, true);
+	public void freeFrontLock() {
+		this.frontLock.set(true);
 	}
 	 
 	 @Override

@@ -56,6 +56,9 @@ public class Check_Administrative_Obligations extends Action<Boolean> {
 			//freeing the computer.
 			this.then(subActions, ()->{
 				Simulator.wareHouse.freeComputer(this.computerId);
+				if(this.promise.isResolved())
+					this.promise.get();
+				else this.complete(true);
 			});
 		});
 		this.actorState.addRecord(actionName);
