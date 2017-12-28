@@ -76,13 +76,14 @@ public class Promise<T>{
 	 */
 	public synchronized void resolve(T value){
 		if(this.isResolved.get()) 
-			throw new IllegalStateException("promise is resloved yet");
+			throw new IllegalStateException("promise is resloved");
 		else {
 			this.isResolved.compareAndSet(false, true);
 			this.resualt=value;
 				for (callback callback : callbacks) {
 					callback.call();
-				}			
+				}
+				this.callbacks.clear();
 		}
 	}
 

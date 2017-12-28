@@ -1,7 +1,7 @@
 /**
  * 
  */
-package bgu.spl.a2.sim.Actions.subActions;
+package bgu.spl.a2.sim.Actions;
 
 import java.util.ArrayList;
 

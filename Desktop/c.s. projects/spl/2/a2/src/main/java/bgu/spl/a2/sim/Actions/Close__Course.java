@@ -3,8 +3,8 @@ package bgu.spl.a2.sim.Actions;
 import java.util.ArrayList;
 
 import bgu.spl.a2.Action;
+import bgu.spl.a2.PrivateState;
 import bgu.spl.a2.sim.Simulator;
-import bgu.spl.a2.sim.Actions.subActions.CloseCourseConformation;
 import bgu.spl.a2.sim.privateStates.CoursePrivateState;
 import bgu.spl.a2.sim.privateStates.DepartmentPrivateState;
 /**
@@ -38,31 +38,32 @@ public class Close__Course extends Action<Boolean> {
 	 */
 	@Override
 	protected void start() {
-		this.coursePrivateState = (CoursePrivateState)this.pool.getActors().get(this.courseId);
-		if(((DepartmentPrivateState)this.actorState).getCourseList().contains(this.courseId)) {
-			ArrayList<Action<Boolean>> subActions = new ArrayList<>();
-			//sending a sub action to the course actor- telling him to remove all student from the course
-			CloseCourseConformation conf = new CloseCourseConformation();
-			this.pool.submit(conf,this.courseId, this.coursePrivateState);
-			subActions.add(conf);
-			this.then(subActions,()->{
-				//will be executed when all the SubActions will finish
-				//and also after the action will get back into his original
-				//queue
-				Boolean resualt = subActions.get(0).getResult().get();
-				if(resualt) {
-					((DepartmentPrivateState)this.actorState).getCourseList().remove(this.courseId);
-				}else {
-					System.out.println("course was not closed");
-					}
-				this.complete(resualt);
-				
-			});
-		}
-		else {
-			this.complete(false);
-			System.out.println("course is not in the department");
-		}
+			this.coursePrivateState = (CoursePrivateState)this.pool.getActors().get(this.courseId);
+			if(((DepartmentPrivateState)this.actorState).getCourseList().contains(this.courseId) & this.coursePrivateState.getRegistered()>0) {
+				ArrayList<Action<Boolean>> subActions = new ArrayList<>();
+				//sending a sub action to the course actor- telling him to remove all student from the course
+				CloseCourseConformation conf = new CloseCourseConformation();
+				this.pool.submit(conf,this.courseId, this.coursePrivateState);
+				subActions.add(conf);
+				this.then(subActions,()->{
+					//will be executed when all the SubActions will finish
+					//and also after the action will get back into his original
+					//queue
+					Boolean resualt = subActions.get(0).getResult().get();
+					if(resualt) 
+						((DepartmentPrivateState)this.actorState).getCourseList().remove(this.courseId);
+					this.complete(resualt);
+					
+				});
+			}
+			else if(((DepartmentPrivateState)this.actorState).getCourseList().contains(this.courseId) & this.coursePrivateState.getRegistered()==0) {
+				((DepartmentPrivateState)this.actorState).getCourseList().remove(this.courseId);
+				this.complete(true);
+			}
+			else {
+				this.complete(false);
+			}
+		
 		this.actorState.addRecord(actionName);
 	}
 	

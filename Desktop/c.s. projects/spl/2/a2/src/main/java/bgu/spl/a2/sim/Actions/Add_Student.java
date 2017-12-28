@@ -7,7 +7,6 @@ import bgu.spl.a2.Action;
 import bgu.spl.a2.OneAccessQueue;
 import bgu.spl.a2.PrivateState;
 import bgu.spl.a2.sim.Simulator;
-import bgu.spl.a2.sim.Actions.subActions.ConformationAction;
 import bgu.spl.a2.sim.privateStates.DepartmentPrivateState;
 import bgu.spl.a2.sim.privateStates.StudentPrivateState;
 /**
@@ -58,7 +57,7 @@ public class Add_Student extends Action<Boolean> {
 			if(resualt) {
 				List<String> registeredStudents = ((DepartmentPrivateState)this.actorState).getStudentList();
 				registeredStudents.add(this.studentId);
-			}else {System.out.println("student was not created");}			
+			}else {System.out.println("student was not created");}	
 			Simulator.Actioncounter.countDown();		
 		});
 		this.actorState.addRecord(actionName);

@@ -87,7 +87,11 @@ public class ActionsCreator {
 		Register_With_Preferences registerWithPrefernceAction;
 		if(gradesJson!=null) {
 			ArrayList<Integer> grades = new ArrayList<>();
-			gradesJson.forEach(entry->{grades.add(Integer.parseInt(entry.toString()));});
+			gradesJson.forEach(entry->{
+				if(entry.toString().compareTo("-")==0)
+					grades.add(-1);
+				else grades.add(Integer.parseInt(entry.toString()));
+			});
 			registerWithPrefernceAction = new Register_With_Preferences(preferences,grades);
 		}
 		else{

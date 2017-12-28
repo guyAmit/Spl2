@@ -5,7 +5,6 @@ import bgu.spl.a2.*;
 import bgu.spl.a2.Action;
 import bgu.spl.a2.sim.Computer;
 import bgu.spl.a2.sim.Simulator;
-import bgu.spl.a2.sim.Actions.subActions.CheckAndSignConformation;
 import bgu.spl.a2.sim.privateStates.StudentPrivateState;
 
 public class Check_Administrative_Obligations extends Action<Boolean> {

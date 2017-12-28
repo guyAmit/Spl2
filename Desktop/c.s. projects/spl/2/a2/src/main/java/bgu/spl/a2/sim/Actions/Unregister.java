@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import bgu.spl.a2.Action;
 import bgu.spl.a2.sim.Simulator;
-import bgu.spl.a2.sim.Actions.subActions.UnRegistrationConformation;
 import bgu.spl.a2.sim.privateStates.CoursePrivateState;
 import bgu.spl.a2.sim.privateStates.StudentPrivateState;
 
@@ -42,30 +41,31 @@ public class Unregister extends Action<Boolean> {
 	protected void start() {
 		this.studentPrivateState = (StudentPrivateState)this.pool.getActors().get(this.studentId);
 		if(((CoursePrivateState)this.actorState).getRegStudents().contains(studentId)) {
-			if(((CoursePrivateState)this.actorState).getAvailableSpots()>0) { //making sure that the course is not closed
-				ArrayList<Action<Boolean>> subActions = new ArrayList<>();
-				//sending a sub action to the student actor to remove him self from this course
-				UnRegistrationConformation conf = new UnRegistrationConformation(this.actorId);
-				subActions.add(conf);
-				this.pool.submit(conf,this.studentId, studentPrivateState);
-				this.then(subActions, ()->{
-					//will be executed when all the SubActions will finish
-					//and also after the action will get back into his original
-					//queue
-					Boolean resualt = subActions.get(0).getResult().get();
-					if(resualt) {
-						((CoursePrivateState)this.actorState).unRegister(this.studentId);
-					}
-					else {System.out.println("unregistration failed");}
-					this.complete(resualt);
-				});
-				
+				if(((CoursePrivateState)this.actorState).getAvailableSpots()>0) { //making sure that the course is not closed
+					ArrayList<Action<Boolean>> subActions = new ArrayList<>();
+					//sending a sub action to the student actor to remove him self from this course
+					UnRegistrationConformation conf = new UnRegistrationConformation(this.actorId);
+					subActions.add(conf);
+					this.pool.submit(conf,this.studentId, studentPrivateState);
+					this.then(subActions, ()->{
+						//will be executed when all the SubActions will finish
+						//and also after the action will get back into his original
+						//queue
+						Boolean resualt = subActions.get(0).getResult().get();
+						if(resualt) {
+							((CoursePrivateState)this.actorState).unRegister(this.studentId);
+						}
+						this.complete(resualt);
+					});
+					
+			}
+			else {
+				this.complete(false);			
+			}
 		}
 		else {
-			System.out.println("student is not registerd");
-			this.complete(false);			
+			this.complete(false);	
 		}
-	}
 		this.actorState.addRecord(actionName);
 	}
 	

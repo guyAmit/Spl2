@@ -1,4 +1,4 @@
-{ "threads": 15, "Computers" : [ { "Type":"A",
+{ "threads": 10, "Computers" : [ { "Type":"A",
 
 "Sig Success": "111111111", "Sig Fail": "999999999" }, 
 { "Type":"B", "Sig Success": "222222222", "Sig Fail": "888888888" } ],
@@ -81,9 +81,6 @@
 { "Action": "Participate In Course", "Student": "competition3", "Course": "room for 2", "Grade": ["100"] }, 
 { "Action": "Close Course", "Department": "FIRE", "Course": "closed course with added spaces" }, 
 { "Action": "Add Spaces", "Course": "closed course with added spaces", "Number": "100" }, 	
-{ "Action": "Participate In Course", "Student": "123456789","Course": "Data Bases", "Grade": ["-"] }, 
-{ "Action": "Register With Preferences", "Student": "5959595959", "Preferences": ["Data Bases","SPL"], "Grade": ["98","56"] }, 
-{ "Action": "Unregister", "Student": "123456789", "Course": "Data Bases" }, 
 { "Action": "Register With Preferences", "Student": "Cant sign to any of pref", "Preferences": ["pref1","pref3","pref4"], "Grade": ["-","90","-"] }, 
 { "Action": "Close Course", "Department": "CS", "Course": "Data Bases" } ], 
 
