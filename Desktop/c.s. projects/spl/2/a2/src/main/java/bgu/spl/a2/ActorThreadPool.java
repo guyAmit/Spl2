@@ -69,11 +69,10 @@ public class ActorThreadPool {
 										PrivateState actorPrivateState = this.getPrivaetState(actorId);
 										size.decrementAndGet();
 										action.handle(this, actorId, actorPrivateState);
-										System.out.println(Simulator.Actioncounter.getCount());
-										System.out.println(size.get());
+										entry.getValue().freeFrontLock();
 										monitor.inc();
 									}
-									entry.getValue().freeFrontLock();										
+																			
 							}
 							
 						}

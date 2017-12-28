@@ -61,10 +61,10 @@ public class Participate_In_Course extends Action<Boolean> {
 		
 		if(((CoursePrivateState)this.actorState).getAvailableSpots()>0 &
 				this.studentPrivateState.meetRequirements(((CoursePrivateState)this.actorState).getPrequisites())) {
-			/****Indicating that the registering is in proccses****
+			/****Indicating that the registering is in process****
 			 *  --decreasing the spots, so other student wont be able to register
 			 *  --adding the student to the list, so other actions will 
-			 *  	know he is indeed in registering proccess
+			 *  	know he is indeed in registering process
 			 */
 			((CoursePrivateState)this.actorState).changeSpots(-1); 
 			((CoursePrivateState)this.actorState).getRegStudents().add(this.studendId);
@@ -85,7 +85,7 @@ public class Participate_In_Course extends Action<Boolean> {
 					Boolean result = subActions.get(0).getResult().get();
 					((CoursePrivateState)this.actorState).changeSpots(1);
 					((CoursePrivateState)this.actorState).getRegStudents().remove(this.studendId);
-					//complete the registering proccess according to the result
+					//complete the registering process according to the result
 					if(result) 
 						((CoursePrivateState)this.actorState).register(this.studendId);
 					this.complete(result);

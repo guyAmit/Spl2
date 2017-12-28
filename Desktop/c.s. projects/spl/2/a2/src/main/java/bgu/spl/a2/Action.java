@@ -72,8 +72,8 @@ public abstract class Action<R> {
     	AtomicInteger i = new AtomicInteger(actions.size());
     	for(Action<?> action: actions){
     		action.promise.subscribe(()->{
-    			i.decrementAndGet();
-    			if(i.get()==0)
+    			i.getAndDecrement();
+    			if(i.get()<=1)
     			{
     				//the last SubAction that get called should enqueue the original 
     				//action back into his queue

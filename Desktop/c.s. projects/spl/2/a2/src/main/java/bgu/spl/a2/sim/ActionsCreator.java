@@ -62,7 +62,11 @@ public class ActionsCreator {
 		if(jsonEntry.get("Grade")!=null) {
 			JSONArray gradeJson = (JSONArray)(jsonEntry).get("Grade");
 			ArrayList<Integer> gradeArray =new ArrayList<>();
-			gradeJson.forEach(entry->{gradeArray.add(Integer.parseInt(entry.toString()));});
+			gradeJson.forEach(entry->{
+				if(entry.toString().compareTo("-")==0) 
+					gradeArray.add(-1);
+				else gradeArray.add(Integer.parseInt(entry.toString()));
+				});
 			grade=gradeArray.get(0);
 			participateInCourseAction = new Participate_In_Course(studentId, grade);
 		}
@@ -114,7 +118,7 @@ public class ActionsCreator {
 	public static void createAddSpacesAction(JSONObject jsonEntry,ActorThreadPool actorThreadPool) {
 		String courseId = jsonEntry.get("Course").toString();
 		CoursePrivateState coursePrivateState =(CoursePrivateState)actorThreadPool.getPrivaetState(courseId);
-		Integer spaces = (Integer)jsonEntry.get("Number");
+		Integer spaces = Integer.parseInt(jsonEntry.get("Number").toString());
 		Open_new_spots openNewSpotsAction = new Open_new_spots(courseId, spaces);
 		openNewSpotsAction.getResult().subscribe(()->{Simulator.Actioncounter.countDown();});
 		actorThreadPool.submit(openNewSpotsAction, courseId, coursePrivateState);

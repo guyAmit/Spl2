@@ -41,7 +41,7 @@ public class Simulator {
 	private static final String Phase1="Phase 1";
 	private static final String Phase2="Phase 2";
 	private static final String Phase3="Phase 3";
-	private static final Long Sleep = (long) 500;
+	private static final Long Sleep = (long) 10;
 	public static ActorThreadPool actorThreadPool;
 	public static Warehouse wareHouse;
 	public static Object jObj;
@@ -55,6 +55,7 @@ public class Simulator {
 			initPhaseActions((JSONObject)jObj,Phase1);
 			actorThreadPool.start();
 			try {
+				Thread.sleep(Sleep);
 				Actioncounter.await();
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
@@ -63,6 +64,7 @@ public class Simulator {
 			initPhaseActions((JSONObject)jObj,Phase2);
 			ActorThreadPool.monitor.inc();
 			try {
+				Thread.sleep(Sleep);
 				Actioncounter.await();
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
@@ -71,6 +73,7 @@ public class Simulator {
 			initPhaseActions((JSONObject)jObj,Phase3);
 			ActorThreadPool.monitor.inc();
 			try {
+				Thread.sleep(Sleep);
 				Actioncounter.await();
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
@@ -109,10 +112,14 @@ public class Simulator {
 			oos.writeObject(returnMap);
 			oos.close();
 			outStram.close();
+			actorThreadPool.shutdown();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

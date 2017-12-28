@@ -34,7 +34,6 @@ public class SimulatorTest {
     @Test
     public void main() throws InterruptedException {
         Simulator.main(new String[]{"Inputs/input1.txt"});
-        Thread.sleep(200);
         try (InputStream fin = new FileInputStream("result.ser");
              ObjectInputStream ois = new ObjectInputStream(fin)) {
             HashMap<String, PrivateState> data = (HashMap<String, PrivateState>) ois.readObject();

@@ -66,7 +66,7 @@ public class Open_A_New_Course extends Action<Boolean> {
 				}
 			else {System.out.println("student was not created");}
 			
-			this.complete(resualt);
+			Simulator.Actioncounter.countDown();
 		});
 		this.actorState.addRecord(actionName);
 	}

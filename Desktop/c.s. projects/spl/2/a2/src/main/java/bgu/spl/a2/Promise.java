@@ -5,6 +5,7 @@ package bgu.spl.a2;
  */
 
 import java.util.ArrayList;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -24,13 +25,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class Promise<T>{
 	
-	private ArrayList<callback> callbacks;
+	private LinkedBlockingQueue<callback> callbacks;
 	private T resualt;
 	private AtomicBoolean isResolved;
 
 	
 	public Promise() {
-		this.callbacks=new ArrayList<>();
+		this.callbacks =new LinkedBlockingQueue<callback>();
 		this.isResolved= new AtomicBoolean(false);
 	}
 
@@ -73,19 +74,15 @@ public class Promise<T>{
 	 * @param value
 	 *            - the value to resolve this promise object with
 	 */
-	public void resolve(T value){
+	public synchronized void resolve(T value){
 		if(this.isResolved.get()) 
-			throw new IllegalStateException("promise is not resloved yet");
+			throw new IllegalStateException("promise is resloved yet");
 		else {
 			this.isResolved.compareAndSet(false, true);
 			this.resualt=value;
-			synchronized (this) {
 				for (callback callback : callbacks) {
 					callback.call();
-				}
-			}
-				this.callbacks.clear();
-			
+				}			
 		}
 	}
 
@@ -108,8 +105,7 @@ public class Promise<T>{
 			callback=null;
 		}
 		else {
-			if(!this.callbacks.contains(callback))
-				this.callbacks.add(callback);
+			this.callbacks.add(callback);
 		}
 	}
 }

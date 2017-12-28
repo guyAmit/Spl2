@@ -26,7 +26,7 @@ public class Register_With_Preferences extends Action<Boolean> {
 	public Register_With_Preferences(ArrayList<String> preferences, ArrayList<Integer> Grades) {
 		this.preferences=preferences;
 		this.grades=Grades;
-		this.actionName="Register with preferences";
+		this.actionName="Register With Preferences";
 	}
 	
 	public Register_With_Preferences(ArrayList<String> preferences) {

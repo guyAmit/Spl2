@@ -48,7 +48,7 @@ public class Check_Administrative_Obligations extends Action<Boolean> {
 		computerPromise.subscribe(()->{
 			int i=0;
 			for (StudentPrivateState student : this.studentsPrivateStates) {
-				CheckAndSignConformation conf = new CheckAndSignConformation(computerPromise.get().checkAndSign(coursesIds, student.getGrades()));
+				CheckAndSignConformation conf = new CheckAndSignConformation(computerPromise.get(),this.coursesIds);
 				subActions.add(conf);
 				this.pool.submit(conf, studentsIds.get(i), student);
 				i++;
@@ -56,9 +56,7 @@ public class Check_Administrative_Obligations extends Action<Boolean> {
 			//freeing the computer.
 			this.then(subActions, ()->{
 				Simulator.wareHouse.freeComputer(this.computerId);
-				if(this.promise.isResolved())
-					this.promise.get();
-				else this.complete(true);
+				Simulator.Actioncounter.countDown();
 			});
 		});
 		this.actorState.addRecord(actionName);

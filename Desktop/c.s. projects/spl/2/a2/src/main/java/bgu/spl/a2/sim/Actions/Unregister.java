@@ -62,8 +62,8 @@ public class Unregister extends Action<Boolean> {
 				
 		}
 		else {
-			this.complete(false);			
 			System.out.println("student is not registerd");
+			this.complete(false);			
 		}
 	}
 		this.actorState.addRecord(actionName);

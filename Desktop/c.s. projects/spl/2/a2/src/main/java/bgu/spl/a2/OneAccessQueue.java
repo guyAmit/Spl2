@@ -5,13 +5,14 @@ package bgu.spl.a2;
 
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.*;
 /**
  * @author Guy-Amit
  * @param <E>
  *
  */
-public class OneAccessQueue<E> extends LinkedList<E>{
+public class OneAccessQueue<E> extends LinkedBlockingQueue<E>{
 	
 	private AtomicBoolean frontLock;
 	private AtomicBoolean backLock;
@@ -65,7 +66,7 @@ public class OneAccessQueue<E> extends LinkedList<E>{
 	public  Boolean enqueue(E e) {
 		try {
 			if(!this.backLock.get()) {
-				super.addLast(e);
+				super.put(e);
 				this.length.incrementAndGet();
 				this.backLock.compareAndSet(false, true);
 				return true;
@@ -89,7 +90,7 @@ public class OneAccessQueue<E> extends LinkedList<E>{
 			if(this.length.get()>0) {
 				E returnVal=null;
 				try {
-					returnVal = super.removeFirst();
+					returnVal = super.poll();
 				}catch(NoSuchElementException e) {}
 				this.length.decrementAndGet();
 				return returnVal;
